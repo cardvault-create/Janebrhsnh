@@ -13,7 +13,10 @@
         .success { background: #00ff41; color: #000; border: none; }
         .box { border: 1px solid #333; padding: 15px; margin-bottom: 20px; border-radius: 8px; background: #111; }
         .hidden { display: none; }
-        .key-item { border-bottom: 1px solid #333; padding: 10px 0; font-size: 14px; }
+        .key-item { border-bottom: 1px solid #333; padding: 10px 0; font-size: 13px; background: #1a1a24; border-radius: 5px; margin-bottom: 5px; padding: 10px; }
+        .green { color: #00ff41; }
+        .red { color: #ff003c; }
+        .cyan { color: #00e5ff; }
     </style>
 </head>
 <body>
@@ -32,7 +35,7 @@
         </div>
 
         <div class="box">
-            <h2>API KEYS (Save Here)</h2>
+            <h2>API KEYS</h2>
             <input type="text" id="apiKey1" placeholder="API Key 1">
             <input type="text" id="apiKey2" placeholder="API Key 2">
             <button onclick="saveApi()">SAVE API KEYS</button>
@@ -44,14 +47,14 @@
         </div>
 
         <div class="box">
-            <h2>GENERATE KEY</h2>
+            <h2>GENERATE NEW KEY</h2>
             <input type="text" id="keyName" placeholder="Key Name (e.g. VIP-USER)">
             <input type="text" id="keyExpiry" placeholder="Expiry (1m, 1h, 1d, 7d)">
             <button onclick="generateKey()" class="success">GENERATE KEY</button>
         </div>
 
         <div class="box">
-            <h2>KEYS & HISTORY</h2>
+            <h2>ALL KEYS & DETAILS</h2>
             <button onclick="fetchKeys()">REFRESH LIST</button>
             <div id="keyList" style="margin-top:15px;"></div>
         </div>
@@ -76,11 +79,7 @@
             const db = dbUrlInput.value;
             if (!db) return alert("Enter DB URL");
             localStorage.setItem('dbUrl', db);
-            // Save to cloud so app can read it
-            await fetch(`${db}settings/config.json`, {
-                method: 'PATCH',
-                body: JSON.stringify({ db_url: db })
-            });
+            await fetch(`${db}settings/config.json`, { method: 'PATCH', body: JSON.stringify({ db_url: db }) });
             alert("DB URL Saved & Pushed to Cloud!");
         }
 
@@ -89,11 +88,7 @@
             if (!db) return alert("Save DB URL first");
             const k1 = document.getElementById('apiKey1').value;
             const k2 = document.getElementById('apiKey2').value;
-            
-            await fetch(`${db}settings/config.json`, {
-                method: 'PATCH',
-                body: JSON.stringify({ api_key_1: k1, api_key_2: k2 })
-            });
+            await fetch(`${db}settings/config.json`, { method: 'PATCH', body: JSON.stringify({ api_key_1: k1, api_key_2: k2 }) });
             alert("APIs Saved to Cloud!");
         }
 
@@ -167,11 +162,15 @@
                     for (let key in data) {
                         const k = data[key];
                         const status = k.blocked ? "BLOCKED" : "ACTIVE";
-                        const color = k.blocked ? "#ff003c" : "#00ff41";
+                        const color = k.blocked ? "red" : "green";
+                        const usedStatus = k.firstUsed === 0 ? "NOT USED YET" : "USED";
+                        const device = k.device || "None";
+                        
                         html += `
                             <div class="key-item">
-                                <b>${key}</b> <span style="color:${color}">[${status}]</span><br>
-                                Device: ${k.device || 'None'}<br>
+                                <b class="cyan">${key}</b> <br>
+                                <span class="${color}">STATUS: ${status}</span> | <span class="green">${usedStatus}</span><br>
+                                Device: ${device}<br>
                                 <button class="danger" style="width:auto; padding:5px 10px; font-size:12px; margin-top:5px;" onclick="deleteKey('${key}')">DELETE KEY</button>
                             </div>
                         `;
