@@ -126,7 +126,6 @@
             if (pass === "veil") { 
                 document.getElementById('loginBox').classList.add('hidden');
                 document.getElementById('mainPanel').classList.remove('hidden');
-                // Data fetch after login
                 fetchKillStatus();
                 fetchKeys();
                 fetchApis();
@@ -140,7 +139,7 @@
             if (!db.endsWith('/')) { dbUrlInput.value = db + '/'; }
             localStorage.setItem('dbUrl', dbUrlInput.value);
             
-            // Save DB URL to settings
+            // Save DB URL to settings (Force write)
             await fetch(`${dbUrlInput.value}settings/config.json`, { method: 'PATCH', body: JSON.stringify({ db_url: dbUrlInput.value }) });
             alert("𝐃𝐁 𝐔𝐑𝐋 𝐒𝐚𝐯𝐞𝐝 & 𝐏𝐮𝐬𝐡𝐞𝐝 𝐭𝐨 𝐂𝐥𝐨𝐮𝐝!");
         }
@@ -232,6 +231,7 @@
             const db = dbUrlInput.value;
             if (!db) return alert("𝐒𝐚𝐯𝐞 𝐃𝐁 𝐔𝐑𝐋 𝐟𝐢𝐫𝐬𝐭");
             const isChecked = document.getElementById('lockSwitch').checked;
+            // Force App Block save
             await fetch(`${db}settings/app_blocked.json`, { method: 'PUT', body: JSON.stringify(isChecked) });
             fetchKillStatus();
         }
@@ -270,6 +270,7 @@
             else if (expiry.endsWith('d')) timeMs = parseInt(expiry) * 86400000;
 
             const expiryTime = Date.now() + timeMs;
+            // Force Key Save
             await fetch(`${db}keys/${name}.json`, { method: 'PUT', body: JSON.stringify({ expiry: expiryTime, blocked: false, firstUsed: 0 }) });
             
             generatedKeyText = `🖤 ◆ 𝐊𝐞𝐲 ➪ ${name}\n👼 ◆ 𝐃𝐮𝐫𝐚𝐭𝐢𝐨𝐧 ➪ ${expiry}\n🍂 ◆ 𝐆𝐞𝐧𝐞𝐫𝐚𝐭𝐞 𝐓𝐢𝐦𝐞 ➪ ${formatTime(Date.now())}\n🪼 ◆ 𝐄𝐱𝐩𝐢𝐫𝐲 𝐓𝐢𝐦𝐞 ➪ ${formatTime(expiryTime)}\n◆ 𝐍𝐨𝐭𝐞 ➪ 𝐄𝐱𝐩𝐢𝐫𝐲 𝐬𝐭𝐚𝐫𝐭𝐬 𝐰𝐡𝐞𝐧 𝐮𝐬𝐞𝐫 𝐥𝐨𝐠𝐬 𝐢𝐧 ◆`;
@@ -277,7 +278,9 @@
             document.getElementById('newKeyDisplay').classList.remove('hidden');
             document.getElementById('newKeyText').innerText = generatedKeyText;
             document.getElementById('keyName').value = '';
-            fetchKeys(); // Turant list refresh karo
+            
+            // 1 second wait karke list refresh karo taaki data save ho jaye
+            setTimeout(() => { fetchKeys(); }, 1000);
         }
 
         function copyGeneratedKey() {
