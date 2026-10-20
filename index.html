@@ -32,6 +32,13 @@
         </div>
 
         <div class="box">
+            <h2>API KEYS (Save Here)</h2>
+            <input type="text" id="apiKey1" placeholder="API Key 1">
+            <input type="text" id="apiKey2" placeholder="API Key 2">
+            <button onclick="saveApi()">SAVE API KEYS</button>
+        </div>
+
+        <div class="box">
             <h2>APP KILL SWITCH</h2>
             <button id="killBtn" onclick="toggleKill()" class="danger">BLOCK ALL USERS</button>
         </div>
@@ -61,12 +68,46 @@
                 document.getElementById('mainPanel').classList.remove('hidden');
                 fetchKillStatus();
                 fetchKeys();
+                fetchApis();
             } else { alert("Wrong Password"); }
         }
 
-        function saveDb() {
-            localStorage.setItem('dbUrl', dbUrlInput.value);
-            alert("DB URL Saved!");
+        async function saveDb() {
+            const db = dbUrlInput.value;
+            if (!db) return alert("Enter DB URL");
+            localStorage.setItem('dbUrl', db);
+            // Save to cloud so app can read it
+            await fetch(`${db}settings/config.json`, {
+                method: 'PATCH',
+                body: JSON.stringify({ db_url: db })
+            });
+            alert("DB URL Saved & Pushed to Cloud!");
+        }
+
+        async function saveApi() {
+            const db = dbUrlInput.value;
+            if (!db) return alert("Save DB URL first");
+            const k1 = document.getElementById('apiKey1').value;
+            const k2 = document.getElementById('apiKey2').value;
+            
+            await fetch(`${db}settings/config.json`, {
+                method: 'PATCH',
+                body: JSON.stringify({ api_key_1: k1, api_key_2: k2 })
+            });
+            alert("APIs Saved to Cloud!");
+        }
+
+        async function fetchApis() {
+            const db = dbUrlInput.value;
+            if (!db) return;
+            try {
+                const res = await fetch(`${db}settings/config.json`);
+                const data = await res.json();
+                if (data) {
+                    document.getElementById('apiKey1').value = data.api_key_1 || '';
+                    document.getElementById('apiKey2').value = data.api_key_2 || '';
+                }
+            } catch(e) {}
         }
 
         async function toggleKill() {
