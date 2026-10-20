@@ -7,16 +7,17 @@
     <style>
         body { background-color: #0a0a0f; color: #fff; font-family: monospace; padding: 20px; }
         h2 { color: #00ff41; }
-        input, button { background: #111; color: #fff; border: 1px solid #00ff41; padding: 12px; margin: 5px 0; width: 100%; box-sizing: border-box; border-radius: 5px; }
+        input, button { background: #111; color: #fff; border: 1px solid #00ff41; padding: 12px; margin: 5px 0; width: 100%; box-sizing: border-box; border-radius: 5px; font-family: monospace;}
         button { cursor: pointer; font-weight: bold; }
         .danger { background: #ff003c; color: #fff; border: none; }
         .success { background: #00ff41; color: #000; border: none; }
         .box { border: 1px solid #333; padding: 15px; margin-bottom: 20px; border-radius: 8px; background: #111; }
         .hidden { display: none; }
-        .key-item { border-bottom: 1px solid #333; padding: 10px 0; font-size: 13px; background: #1a1a24; border-radius: 5px; margin-bottom: 5px; padding: 10px; }
+        .key-item { border-bottom: 1px solid #333; padding: 10px; font-size: 13px; background: #1a1a24; border-radius: 5px; margin-bottom: 5px;}
         .green { color: #00ff41; }
         .red { color: #ff003c; }
         .cyan { color: #00e5ff; }
+        .copy-btn { background: #00e5ff; color: #000; padding: 5px 10px; font-size: 10px; border-radius: 3px; margin-top: 5px; width: auto; border: none; }
     </style>
 </head>
 <body>
@@ -42,8 +43,8 @@
         </div>
 
         <div class="box">
-            <h2>APP KILL SWITCH</h2>
-            <button id="killBtn" onclick="toggleKill()" class="danger">BLOCK ALL USERS</button>
+            <h2>APP LOCK SWITCH (KILL SWITCH)</h2>
+            <button id="killBtn" onclick="toggleKill()" class="danger">ON / BLOCK ALL USERS</button>
         </div>
 
         <div class="box">
@@ -51,6 +52,10 @@
             <input type="text" id="keyName" placeholder="Key Name (e.g. VIP-USER)">
             <input type="text" id="keyExpiry" placeholder="Expiry (1m, 1h, 1d, 7d)">
             <button onclick="generateKey()" class="success">GENERATE KEY</button>
+            <div id="newKeyDisplay" class="hidden" style="margin-top:15px; border:1px dashed #00ff41; padding:10px;">
+                <div id="newKeyText"></div>
+                <button class="copy-btn" onclick="copyGeneratedKey()">COPY KEY DETAILS</button>
+            </div>
         </div>
 
         <div class="box">
@@ -63,6 +68,7 @@
     <script>
         const dbUrlInput = document.getElementById('dbUrl');
         dbUrlInput.value = localStorage.getItem('dbUrl') || '';
+        let generatedKeyText = "";
 
         function login() {
             const pass = document.getElementById('adminPass').value;
@@ -121,13 +127,19 @@
                 const status = await res.json();
                 const btn = document.getElementById('killBtn');
                 if (status === true) {
-                    btn.innerText = "UNBLOCK USERS (APP IS OFF)";
+                    btn.innerText = "OFF / UNBLOCK USERS (APP IS ON)";
                     btn.className = "success";
                 } else {
-                    btn.innerText = "BLOCK ALL USERS";
+                    btn.innerText = "ON / BLOCK ALL USERS (APP IS OFF)";
                     btn.className = "danger";
                 }
             } catch (e) {}
+        }
+
+        function formatTime(timestamp) {
+            if (!timestamp || timestamp === 0) return "N/A";
+            const d = new Date(timestamp);
+            return d.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
         }
 
         async function generateKey() {
@@ -146,9 +158,20 @@
                 method: 'PUT',
                 body: JSON.stringify({ expiry: expiryTime, blocked: false, firstUsed: 0 })
             });
-            alert("Key Generated!");
+            
+            generatedKeyText = `🔑 Key: ${name}\n⏳ Duration: ${expiry}\n⏰ Generate Time: ${formatTime(Date.now())}\n📅 Expiry Time: ${formatTime(expiryTime)}\n(Note: Expiry starts when user logs in)`;
+            
+            document.getElementById('newKeyDisplay').classList.remove('hidden');
+            document.getElementById('newKeyText').innerText = generatedKeyText;
+            
             document.getElementById('keyName').value = '';
             fetchKeys();
+        }
+
+        function copyGeneratedKey() {
+            navigator.clipboard.writeText(generatedKeyText).then(() => {
+                alert("Key Details Copied!");
+            });
         }
 
         async function fetchKeys() {
@@ -163,21 +186,41 @@
                         const k = data[key];
                         const status = k.blocked ? "BLOCKED" : "ACTIVE";
                         const color = k.blocked ? "red" : "green";
-                        const usedStatus = k.firstUsed === 0 ? "NOT USED YET" : "USED";
+                        const usedStatus = (k.firstUsed === 0 || k.firstUsed === undefined) ? "NOT USED YET" : "USED";
                         const device = k.device || "None";
                         
+                        // Calculate remaining time if used
+                        let timeLeft = "Not Started";
+                        if (k.firstUsed !== 0 && k.firstUsed !== undefined) {
+                            const remaining = k.expiry - Date.now();
+                            if (remaining > 0) timeLeft = Math.floor(remaining/1000) + "s left";
+                            else timeLeft = "EXPIRED";
+                        }
+
                         html += `
                             <div class="key-item">
                                 <b class="cyan">${key}</b> <br>
                                 <span class="${color}">STATUS: ${status}</span> | <span class="green">${usedStatus}</span><br>
-                                Device: ${device}<br>
-                                <button class="danger" style="width:auto; padding:5px 10px; font-size:12px; margin-top:5px;" onclick="deleteKey('${key}')">DELETE KEY</button>
+                                <b>Device:</b> ${device}<br>
+                                <b>Expiry:</b> ${formatTime(k.expiry)}<br>
+                                <b>Time Left:</b> ${timeLeft}<br>
+                                <button class="danger" style="width:auto; padding:5px 10px; font-size:12px; margin-top:8px; margin-right:5px;" onclick="deleteKey('${key}')">DELETE KEY</button>
+                                <button class="success" style="width:auto; padding:5px 10px; font-size:12px; margin-top:8px;" onclick="toggleBlockKey('${key}', ${!k.blocked})">${k.blocked ? 'UNBLOCK' : 'BLOCK'} KEY</button>
                             </div>
                         `;
                     }
                 }
                 document.getElementById('keyList').innerHTML = html || "No keys found.";
             } catch (e) {}
+        }
+
+        async function toggleBlockKey(key, blockStatus) {
+            const db = dbUrlInput.value;
+            await fetch(`${db}keys/${key}.json`, {
+                method: 'PATCH',
+                body: JSON.stringify({ blocked: blockStatus })
+            });
+            fetchKeys();
         }
 
         async function deleteKey(key) {
