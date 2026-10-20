@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BGMI Admin</title>
+    <style>
+        body { background-color: #0a0a0f; color: #fff; font-family: monospace; padding: 20px; }
+        h2 { color: #00ff41; }
+        input, button { background: #111; color: #fff; border: 1px solid #00ff41; padding: 12px; margin: 5px 0; width: 100%; box-sizing: border-box; border-radius: 5px; }
+        button { cursor: pointer; font-weight: bold; }
+        .danger { background: #ff003c; color: #fff; border: none; }
+        .success { background: #00ff41; color: #000; border: none; }
+        .box { border: 1px solid #333; padding: 15px; margin-bottom: 20px; border-radius: 8px; background: #111; }
+        .hidden { display: none; }
+        .key-item { border-bottom: 1px solid #333; padding: 10px 0; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+    <div id="loginBox" class="box">
+        <h2>ADMIN LOGIN</h2>
+        <input type="password" id="adminPass" placeholder="Enter Password">
+        <button onclick="login()">LOGIN</button>
+    </div>
+
+    <div id="mainPanel" class="hidden">
+        <div class="box">
+            <h2>DATABASE URL</h2>
+            <input type="text" id="dbUrl" placeholder="https://xxx.firebaseio.com/">
+            <button onclick="saveDb()">SAVE URL</button>
+        </div>
+
+        <div class="box">
+            <h2>APP KILL SWITCH</h2>
+            <button id="killBtn" onclick="toggleKill()" class="danger">BLOCK ALL USERS</button>
+        </div>
+
+        <div class="box">
+            <h2>GENERATE KEY</h2>
+            <input type="text" id="keyName" placeholder="Key Name (e.g. VIP-USER)">
+            <input type="text" id="keyExpiry" placeholder="Expiry (1m, 1h, 1d, 7d)">
+            <button onclick="generateKey()" class="success">GENERATE KEY</button>
+        </div>
+
+        <div class="box">
+            <h2>KEYS & HISTORY</h2>
+            <button onclick="fetchKeys()">REFRESH LIST</button>
+            <div id="keyList" style="margin-top:15px;"></div>
+        </div>
+    </div>
+
+    <script>
+        const dbUrlInput = document.getElementById('dbUrl');
+        dbUrlInput.value = localStorage.getItem('dbUrl') || '';
+
+        function login() {
+            const pass = document.getElementById('adminPass').value;
+            if (pass === "veil") { 
+                document.getElementById('loginBox').classList.add('hidden');
+                document.getElementById('mainPanel').classList.remove('hidden');
+                fetchKillStatus();
+                fetchKeys();
+            } else { alert("Wrong Password"); }
+        }
+
+        function saveDb() {
+            localStorage.setItem('dbUrl', dbUrlInput.value);
+            alert("DB URL Saved!");
+        }
+
+        async function toggleKill() {
+            const db = dbUrlInput.value;
+            if (!db) return alert("Save DB URL first");
+            const isBlocked = document.getElementById('killBtn').innerText.includes("BLOCK");
+            await fetch(`${db}settings/app_blocked.json`, { method: 'PUT', body: JSON.stringify(!isBlocked) });
+            fetchKillStatus();
+        }
+
+        async function fetchKillStatus() {
+            const db = dbUrlInput.value;
+            if (!db) return;
+            try {
+                const res = await fetch(`${db}settings/app_blocked.json`);
+                const status = await res.json();
+                const btn = document.getElementById('killBtn');
+                if (status === true) {
+                    btn.innerText = "UNBLOCK USERS (APP IS OFF)";
+                    btn.className = "success";
+                } else {
+                    btn.innerText = "BLOCK ALL USERS";
+                    btn.className = "danger";
+                }
+            } catch (e) {}
+        }
+
+        async function generateKey() {
+            const db = dbUrlInput.value;
+            const name = document.getElementById('keyName').value;
+            const expiry = document.getElementById('keyExpiry').value;
+            if (!db || !name || !expiry) return alert("Fill all fields");
+
+            let timeMs = 0;
+            if (expiry.endsWith('m')) timeMs = parseInt(expiry) * 60000;
+            else if (expiry.endsWith('h')) timeMs = parseInt(expiry) * 3600000;
+            else if (expiry.endsWith('d')) timeMs = parseInt(expiry) * 86400000;
+
+            const expiryTime = Date.now() + timeMs;
+            await fetch(`${db}keys/${name}.json`, {
+                method: 'PUT',
+                body: JSON.stringify({ expiry: expiryTime, blocked: false, firstUsed: 0 })
+            });
+            alert("Key Generated!");
+            document.getElementById('keyName').value = '';
+            fetchKeys();
+        }
+
+        async function fetchKeys() {
+            const db = dbUrlInput.value;
+            if (!db) return;
+            try {
+                const res = await fetch(`${db}keys.json`);
+                const data = await res.json();
+                let html = "";
+                if (data) {
+                    for (let key in data) {
+                        const k = data[key];
+                        const status = k.blocked ? "BLOCKED" : "ACTIVE";
+                        const color = k.blocked ? "#ff003c" : "#00ff41";
+                        html += `
+                            <div class="key-item">
+                                <b>${key}</b> <span style="color:${color}">[${status}]</span><br>
+                                Device: ${k.device || 'None'}<br>
+                                <button class="danger" style="width:auto; padding:5px 10px; font-size:12px; margin-top:5px;" onclick="deleteKey('${key}')">DELETE KEY</button>
+                            </div>
+                        `;
+                    }
+                }
+                document.getElementById('keyList').innerHTML = html || "No keys found.";
+            } catch (e) {}
+        }
+
+        async function deleteKey(key) {
+            const db = dbUrlInput.value;
+            if (confirm("Delete this key permanently?")) {
+                await fetch(`${db}keys/${key}.json`, { method: 'DELETE' });
+                fetchKeys();
+            }
+        }
+    </script>
+</body>
+</html>
