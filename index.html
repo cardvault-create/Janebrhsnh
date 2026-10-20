@@ -7,7 +7,8 @@
     <style>
         body { background-color: #0a0a0f; color: #fff; font-family: monospace; padding: 20px; }
         h2 { color: #00ff41; margin-bottom: 10px; font-size: 18px; text-transform: uppercase; letter-spacing: 1px;}
-        input, button { background: #111; color: #fff; border: 1px solid #00ff41; padding: 12px; margin: 5px 0; width: 100%; box-sizing: border-box; border-radius: 5px; font-family: monospace; font-size: 14px;}
+        input, textarea, button { background: #111; color: #fff; border: 1px solid #00ff41; padding: 12px; margin: 5px 0; width: 100%; box-sizing: border-box; border-radius: 5px; font-family: monospace; font-size: 14px;}
+        textarea { resize: vertical; min-height: 60px; }
         button { cursor: pointer; font-weight: bold; transition: 0.3s; }
         button:hover { opacity: 0.8; }
         .danger { background: #ff003c; color: #fff; border: none; }
@@ -85,11 +86,19 @@
             <div id="apiTestResult" style="font-size: 14px; font-weight: bold; margin-top: 10px;"></div>
         </div>
 
+        <!-- CUSTOM NOTIFICATION BOX -->
+        <div class="box">
+            <h2>📢 CUSTOM NOTIFICATION MESSAGE</h2>
+            <input type="text" id="notifTitle" placeholder="Notification Title (e.g., App Locked By Owner)" value="App Locked By Owner">
+            <textarea id="notifMessage" placeholder="Notification Message (e.g., Lock Apply Within 10s...)" style="min-height: 80px;">Lock Apply Within 10s. Agar tum 10s baad open kroge toh open nahi hoga!</textarea>
+            <button onclick="saveNotif()" class="success">SAVE & UPDATE MESSAGE</button>
+        </div>
+
         <!-- APP LOCK SWITCH -->
         <div class="box">
             <h2>🛑 APP LOCK STATUS</h2>
             <div class="lock-box">
-                <div id="lockStatusText" style="font-size: 16px; font-weight: bold; color: #00ff41;">Status: UNLOCKED</div>
+                <div id="lockStatusText" style="font-size: 16px; font-weight: bold; color: #00ff41;">Status : UNLOCKED</div>
                 <label class="switch">
                     <input type="checkbox" id="lockSwitch" onchange="toggleKill()">
                     <span class="slider"></span>
@@ -131,6 +140,7 @@
                 fetchKillStatus();
                 fetchKeys();
                 fetchApis();
+                fetchNotification();
             } else { alert("Wrong Password"); }
         }
 
@@ -143,14 +153,7 @@
             alert("DB URL Saved!");
         }
 
-        function updateDb() {
-            const db = dbUrlInput.value;
-            if (!db) return alert("Enter DB URL");
-            localStorage.setItem('dbUrl', db);
-            fetch(`${db}settings/config.json`, { method: 'PATCH', body: JSON.stringify({ db_url: db }) });
-            alert("DB URL Updated in Cloud!");
-        }
-
+        function updateDb() { saveDb(); alert("DB URL Updated in Cloud!"); }
         function deleteDb() {
             if(confirm("Delete Database URL?")) {
                 localStorage.removeItem('dbUrl');
@@ -163,28 +166,17 @@
         async function saveApi() {
             const db = dbUrlInput.value;
             if (!db) return alert("Save DB URL first");
-            
             let updateData = {};
-            for(let i=1; i<=10; i++) {
-                updateData[`api_key_${i}`] = document.getElementById(`apiKey${i}`).value;
-            }
-            
+            for(let i=1; i<=10; i++) { updateData[`api_key_${i}`] = document.getElementById(`apiKey${i}`).value; }
             await fetch(`${db}settings/config.json`, { method: 'PATCH', body: JSON.stringify(updateData) });
             alert("APIs Saved to Cloud!");
-            fetchApis(); // Refresh test buttons
+            fetchApis();
         }
-
-        async function updateApi() {
-            await saveApi(); // Same logic for update
-            alert("APIs Updated!");
-        }
-
+        function updateApi() { saveApi(); alert("APIs Updated!"); }
         function deleteApi() {
             if(confirm("Clear all API Keys?")) {
-                for(let i=1; i<=10; i++) {
-                    document.getElementById(`apiKey${i}`).value = "";
-                }
-                saveApi(); // Push empty to cloud
+                for(let i=1; i<=10; i++) { document.getElementById(`apiKey${i}`).value = ""; }
+                saveApi();
             }
         }
 
@@ -195,14 +187,13 @@
                 const res = await fetch(`${db}settings/config.json`);
                 const data = await res.json();
                 const testBtnContainer = document.getElementById('apiTestButtons');
-                testBtnContainer.innerHTML = ""; // Clear old buttons
+                testBtnContainer.innerHTML = "";
 
                 if (data) {
                     for(let i=1; i<=10; i++) {
                         const keyVal = data[`api_key_${i}`] || "";
                         document.getElementById(`apiKey${i}`).value = keyVal;
                         
-                        // Create Test Button if key exists
                         if(keyVal.trim() !== "") {
                             const btn = document.createElement('button');
                             btn.innerText = `Test API Slot ${i}`;
@@ -221,11 +212,14 @@
             const resDiv = document.getElementById('apiTestResult');
             resDiv.innerHTML = `<span style="color:#00e5ff;">Testing Slot ${slotNumber}... Please wait.</span>`;
 
-            const testUrl = `https://delvorn.vynqo.in/api/attack/start?key=${apiKey}&ip=1.1.1.1&port=80&time=10`;
+            // Use a CORS proxy to bypass browser restrictions
+            const targetUrl = `https://delvorn.vynqo.in/api/attack/start?key=${apiKey}&ip=1.1.1.1&port=80&time=10`;
+            const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
             
             try {
-                const response = await fetch(testUrl);
-                const text = await response.text();
+                const response = await fetch(proxyUrl);
+                const data = await response.json();
+                const text = data.contents; // The actual API response
                 
                 if (text.includes('"status": "success"') || text.includes('"status":"success"')) {
                     resDiv.innerHTML = `<span class="green">✅ API TEST PASS (Slot ${slotNumber} is Online)</span><br><small>${text}</small>`;
@@ -235,6 +229,30 @@
             } catch (error) {
                 resDiv.innerHTML = `<span class="red">❌ API TEST FAIL (Network Error)</span>`;
             }
+        }
+
+        // ================= CUSTOM NOTIFICATION =================
+        async function saveNotif() {
+            const db = dbUrlInput.value;
+            if (!db) return alert("Save DB URL first");
+            const title = document.getElementById('notifTitle').value;
+            const message = document.getElementById('notifMessage').value;
+            
+            await fetch(`${db}settings/notification.json`, { method: 'PUT', body: JSON.stringify({ title: title, message: message }) });
+            alert("Notification Message Saved!");
+        }
+
+        async function fetchNotification() {
+            const db = dbUrlInput.value;
+            if (!db) return;
+            try {
+                const res = await fetch(`${db}settings/notification.json`);
+                const data = await res.json();
+                if (data) {
+                    document.getElementById('notifTitle').value = data.title || "App Locked By Owner";
+                    document.getElementById('notifMessage').value = data.message || "Lock Apply Within 10s...";
+                }
+            } catch(e) {}
         }
 
         // ================= APP LOCK =================
@@ -286,24 +304,18 @@
             else if (expiry.endsWith('d')) timeMs = parseInt(expiry) * 86400000;
 
             const expiryTime = Date.now() + timeMs;
-            await fetch(`${db}keys/${name}.json`, {
-                method: 'PUT',
-                body: JSON.stringify({ expiry: expiryTime, blocked: false, firstUsed: 0 })
-            });
+            await fetch(`${db}keys/${name}.json`, { method: 'PUT', body: JSON.stringify({ expiry: expiryTime, blocked: false, firstUsed: 0 }) });
             
             generatedKeyText = `🖤 ◆ 𝐊𝐞𝐲 ➪ ${name}\n👼 ◆ 𝐃𝐮𝐫𝐚𝐭𝐢𝐨𝐧 ➪ ${expiry}\n🍂 ◆ 𝐆𝐞𝐧𝐞𝐫𝐚𝐭𝐞 𝐓𝐢𝐦𝐞 ➪ ${formatTime(Date.now())}\n🪼 ◆ 𝐄𝐱𝐩𝐢𝐫𝐲 𝐓𝐢𝐦𝐞 ➪ ${formatTime(expiryTime)}\n◆ 𝐍𝐨𝐭𝐞 ➪ 𝐄𝐱𝐩𝐢𝐫𝐲 𝐬𝐭𝐚𝐫𝐭𝐬 𝐰𝐡𝐞𝐧 𝐮𝐬𝐞𝐫 𝐥𝐨𝐠𝐬 𝐢𝐧 ◆`;
             
             document.getElementById('newKeyDisplay').classList.remove('hidden');
             document.getElementById('newKeyText').innerText = generatedKeyText;
-            
             document.getElementById('keyName').value = '';
             fetchKeys();
         }
 
         function copyGeneratedKey() {
-            navigator.clipboard.writeText(generatedKeyText).then(() => {
-                alert("Key Details Copied!");
-            });
+            navigator.clipboard.writeText(generatedKeyText).then(() => { alert("Key Details Copied!"); });
         }
 
         // ================= FETCH KEYS =================
@@ -350,10 +362,7 @@
 
         async function toggleBlockKey(key, blockStatus) {
             const db = dbUrlInput.value;
-            await fetch(`${db}keys/${key}.json`, {
-                method: 'PATCH',
-                body: JSON.stringify({ blocked: blockStatus })
-            });
+            await fetch(`${db}keys/${key}.json`, { method: 'PATCH', body: JSON.stringify({ blocked: blockStatus }) });
             fetchKeys();
         }
 
