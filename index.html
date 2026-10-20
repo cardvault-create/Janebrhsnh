@@ -178,7 +178,7 @@
                 body: JSON.stringify({ expiry: expiryTime, blocked: false, firstUsed: 0 })
             });
             
-            generatedKeyText = `🔑 Key: ${name}\n⏳ Duration: ${expiry}\n⏰ Generate Time: ${formatTime(Date.now())}\n📅 Expiry Time: ${formatTime(expiryTime)}\n(Note: Expiry starts when user logs in)`;
+            generatedKeyText = `🖤 ◆ 𝐊𝐞𝐲 ➪ ${name}\n👼 ◆ 𝐃𝐮𝐫𝐚𝐭𝐢𝐨𝐧 ➪ ${expiry}\n🍂 ◆ 𝐆𝐞𝐧𝐞𝐫𝐚𝐭𝐞 𝐓𝐢𝐦𝐞 ➪ ${formatTime(Date.now())}\n🪼 ◆ 𝐄𝐱𝐩𝐢𝐫𝐲 𝐓𝐢𝐦𝐞 ➪ ${formatTime(expiryTime)}\n◆ 𝐍𝐨𝐭𝐞 ➪ 𝐄𝐱𝐩𝐢𝐫𝐲 𝐬𝐭𝐚𝐫𝐭𝐬 𝐰𝐡𝐞𝐧 𝐮𝐬𝐞𝐫 𝐥𝐨𝐠𝐬 𝐢𝐧 ◆`;
             
             document.getElementById('newKeyDisplay').classList.remove('hidden');
             document.getElementById('newKeyText').innerText = generatedKeyText;
