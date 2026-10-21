@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>𝚩𝖊𝐒𝖙𝐂𝖍𝐄𝖆𝐓 ✘ 𝙳𝐃𝙾𝐒 𝙾𝐍𝙸𝐗 ♪</title>
+    <title>𝚩𝖊𝐒𝖙𝐂𝖍𝐄𝖆𝐓 ✘ 𝙳𝐃𝙾𝐒 𝙾𝙉𝙄𝙓 ♪</title>
     <style>
         body { background-color: #0a0a0f; color: #fff; font-family: monospace; padding: 20px; }
         h2 { color: #00ff41; margin-bottom: 10px; font-size: 18px; text-transform: uppercase; letter-spacing: 1px;}
@@ -114,14 +114,19 @@
             <div style="font-size: 11px; color: #888; margin-top: 10px;">𝐓𝐮𝐫𝐧 𝐎𝐍 𝐭𝐨 𝐛𝐥𝐨𝐜𝐤 𝐚𝐥𝐥 𝐚𝐭𝐭𝐚𝐜𝐤 𝐜𝐨𝐦𝐦𝐚𝐧𝐝𝐬.</div>
         </div>
 
-        <!-- VERSION CONTROL SECTION (NEW) -->
+        <!-- PREMIUM VERSION MANAGER (NEW) -->
         <div class="box">
-            <h2>🔄 𝐕𝐄𝐑𝐒𝐈𝐎𝐍 𝐂𝐎𝐍𝐓𝐑𝐎𝐋</h2>
-            <input type="text" id="versionName" placeholder="𝐄𝐧𝐭𝐞𝐫 𝐕𝐞𝐫𝐬𝐢𝐨𝐧 (𝐞.𝐠. 𝐯𝟏, 𝐯𝟐)">
-            <div class="btn-group">
-                <button onclick="toggleVersion()" class="success">𝐒𝐚𝐯𝐞 & 𝐓𝐨𝐠𝐠𝐥𝐞 𝐒𝐭𝐚𝐭𝐮𝐬</button>
+            <h2>🔄 𝐕𝐄𝐑𝐒𝐈𝐎𝐍 𝐌𝐀𝐍𝐀𝐆𝐄𝐑</h2>
+            
+            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                <input type="text" id="newVersionInput" placeholder="𝐄𝐧𝐭𝐞𝐫 𝐕𝐞𝐫𝐬𝐢𝐨𝐧 (𝐞.𝐠. 𝐯𝟑)" style="margin: 0;">
+                <button onclick="addNewVersion()" class="info" style="width: auto; margin: 0; padding: 0 20px;">Add</button>
             </div>
-            <div id="versionStatusText" style="margin-top:10px; font-weight:bold; color:#00ff41;">𝐒𝐭𝐚𝐭𝐮𝐬: 𝐍𝐨𝐭 𝐒𝐞𝐥𝐞𝐜𝐭𝐞𝐝</div>
+
+            <div id="versionListContainer">
+                <!-- Versions will load here dynamically -->
+                <div style="color: #888; font-size: 12px;">Loading versions...</div>
+            </div>
         </div>
 
         <!-- GENERATE KEY SECTION -->
@@ -169,7 +174,8 @@
                 loadApiUrl();
                 loadApis(); 
                 fetchKillStatus();
-                fetchAttackLockStatus(); // New
+                fetchAttackLockStatus();
+                fetchVersions(); // NEW: Load Versions
                 fetchKeys();
                 fetchNotification();
             } else { alert("𝐖𝐫𝐨𝐧𝐠 𝐏𝐚𝐬𝐬𝐰𝐨𝐫𝐝"); }
@@ -207,7 +213,7 @@
             }
             await fetch(`${CLOUD_DB_URL}settings/config.json`, { method: 'PATCH', body: JSON.stringify(updateData) });
             alert("✅ 𝐀𝐏𝐈𝐬 𝐄𝐧𝐜𝐫𝐲𝐩𝐭𝐞𝐝 & 𝐒𝐚𝐯𝐞𝐝 𝐭𝐨 𝐂𝐥𝐨𝐮𝐝!");
-            loadApis(); // Refresh list after save
+            loadApis();
         }
 
         async function deleteApis() {
@@ -218,7 +224,6 @@
             }
         }
 
-        // --- LOAD APIs (Decrypts using Base64) ---
         async function loadApis() {
             try {
                 const res = await fetch(`${CLOUD_DB_URL}settings/config.json`);
@@ -229,12 +234,9 @@
                 if (data) {
                     for(let i=1; i<=10; i++) {
                         const encryptedVal = data[`api_key_${i}`] || "";
-                        const decryptedVal = decryptKey(encryptedVal); // BASE64 DECODE
-                        
-                        // Fill slots with decrypted keys
+                        const decryptedVal = decryptKey(encryptedVal);
                         document.getElementById(`apiKey${i}`).value = decryptedVal;
                         
-                        // Create test buttons for non-empty keys
                         if(decryptedVal.trim() !== "") {
                             const btn = document.createElement('button');
                             btn.innerText = `⚡ 𝐓𝐞𝐬𝐭 𝐀𝐏𝐈 𝐒𝐥𝐨𝐭 ${i}`;
@@ -244,10 +246,9 @@
                         }
                     }
                 }
-            } catch(e) { console.log("Error loading APIs"); }
+            } catch(e) {}
         }
 
-        // --- TEST API LOGIC ---
         function sendTestRequest(url) {
             return new Promise((resolve) => {
                 const xhr = new XMLHttpRequest();
@@ -263,9 +264,7 @@
                         }
                     }
                 };
-                xhr.onerror = function() {
-                    resolve({ success: false, message: "𝐍𝐞𝐭𝐰𝐨𝐫𝐤 𝐄𝐫𝐫𝐨𝐫" });
-                };
+                xhr.onerror = function() { resolve({ success: false, message: "𝐍𝐞𝐭𝐰𝐨𝐫𝐤 𝐄𝐫𝐫𝐨𝐫" }); };
                 xhr.send();
             });
         }
@@ -273,10 +272,8 @@
         async function testApi(apiKey, slotNumber) {
             const resDiv = document.getElementById('apiTestResult');
             resDiv.innerHTML = `<span style="color:#00e5ff;">⚡ 𝐓𝐞𝐬𝐭𝐢𝐧𝐠 𝐒𝐥𝐨𝐭 ${slotNumber}... 𝐏𝐥𝐞𝐚𝐬𝐞 𝐰𝐚𝐢𝐭.</span>`;
-            
             const baseUrl = document.getElementById('apiUrl').value.trim() || "https://delvorn.vynqo.in/api/attack/start";
             const targetUrl = `${baseUrl}?key=${apiKey}&ip=1.1.1.1&port=80&time=10`;
-            
             const result = await sendTestRequest(targetUrl);
             
             if (result.success) {
@@ -286,7 +283,6 @@
             }
         }
 
-        // --- NOTIFICATION LOGIC ---
         async function saveNotif() {
             const title = document.getElementById('notifTitle').value;
             const message = document.getElementById('notifMessage').value;
@@ -305,7 +301,6 @@
             } catch(e) {}
         }
 
-        // --- KILL SWITCH LOGIC ---
         async function toggleKill() {
             const isChecked = document.getElementById('lockSwitch').checked;
             await fetch(`${CLOUD_DB_URL}settings/app_blocked.json`, { method: 'PUT', body: JSON.stringify(isChecked) });
@@ -326,7 +321,6 @@
             } catch (e) {}
         }
 
-        // --- ATTACK LOCK LOGIC (NEW) ---
         async function toggleAttackLock() {
             const isChecked = document.getElementById('attackLockSwitch').checked;
             await fetch(`${CLOUD_DB_URL}settings/attack_locked.json`, { method: 'PUT', body: JSON.stringify(isChecked) });
@@ -347,24 +341,67 @@
             } catch (e) {}
         }
 
-        // --- VERSION CONTROL LOGIC (NEW) ---
-        async function toggleVersion() {
-            const version = document.getElementById('versionName').value.trim();
-            if(!version) return alert("Enter version name (e.g. v1)");
+        // --- PREMIUM VERSION MANAGER LOGIC (NEW) ---
+        async function fetchVersions() {
+            const container = document.getElementById('versionListContainer');
+            try {
+                const res = await fetch(`${CLOUD_DB_URL}version_control.json`);
+                const data = await res.json();
+                
+                if (!data) {
+                    container.innerHTML = "<div style='color: #888; font-size: 12px;'>No versions found. Add one above.</div>";
+                    return;
+                }
 
-            const res = await fetch(`${CLOUD_DB_URL}version_control/${version}.json`);
-            let currentStatus = await res.json();
-            if(currentStatus === null) currentStatus = false; // Default OFF
+                let html = "";
+                // Keys ko sort karo (v1, v2, v3)
+                const sortedKeys = Object.keys(data).sort((a, b) => {
+                    return a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
+                });
 
-            const newStatus = !currentStatus; // Toggle it
+                for (let v of sortedKeys) {
+                    const isActive = data[v] === true;
+                    const statusText = isActive ? "ON" : "OFF";
+                    const statusColor = isActive ? "#00ff41" : "#ff003c";
+                    
+                    html += `
+                        <div class="lock-box" style="border-bottom: 1px solid #222; padding-bottom: 10px; margin-bottom: 10px;">
+                            <div style="font-size: 16px; font-weight: bold; color: #00e5ff;">${v.toUpperCase()}</div>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 12px; color: ${statusColor}; font-weight: bold;">Status: ${statusText}</span>
+                                <label class="switch">
+                                    <input type="checkbox" onchange="toggleSpecificVersion('${v}', this.checked)" ${isActive ? 'checked' : ''}>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    `;
+                }
+                container.innerHTML = html;
+            } catch(e) {
+                container.innerHTML = "<div style='color: #ff003c; font-size: 12px;'>Error loading versions.</div>";
+            }
+        }
 
+        async function addNewVersion() {
+            const newVer = document.getElementById('newVersionInput').value.trim().toLowerCase();
+            if(!newVer) return alert("Enter a version (e.g. v2)");
+            
+            await fetch(`${CLOUD_DB_URL}version_control/${newVer}.json`, {
+                method: 'PUT',
+                body: JSON.stringify(false) // Default OFF
+            });
+            
+            document.getElementById('newVersionInput').value = "";
+            fetchVersions();
+        }
+
+        async function toggleSpecificVersion(version, isChecked) {
             await fetch(`${CLOUD_DB_URL}version_control/${version}.json`, {
                 method: 'PUT',
-                body: JSON.stringify(newStatus)
+                body: JSON.stringify(isChecked)
             });
-
-            document.getElementById('versionStatusText').innerText = `Status for ${version}: ${newStatus ? "ON" : "OFF"}`;
-            document.getElementById('versionStatusText').style.color = newStatus ? "#00ff41" : "#ff003c";
+            fetchVersions(); // Refresh list to update text color
         }
 
         // --- KEY GENERATION LOGIC ---
@@ -384,15 +421,13 @@
             else if (expiry.endsWith('h')) timeMs = parseInt(expiry) * 3600000;
             else if (expiry.endsWith('d')) timeMs = parseInt(expiry) * 86400000;
 
-            // FIX: Save duration directly instead of end time
             await fetch(`${CLOUD_DB_URL}keys/${name}.json`, { method: 'PUT', body: JSON.stringify({ 
-                expiry: timeMs, // Duration in milliseconds
+                expiry: timeMs,
                 blocked: false, 
                 firstUsed: 0 
             }) });
             
             const generateTime = Date.now();
-            
             generatedKeyText = `🖤 ◆ 𝐊𝐞𝐲 ➪ ${name}\n👼 ◆ 𝐃𝐮𝐫𝐚𝐭𝐢𝐨𝐧 ➪ ${expiry}\n🍂 ◆ 𝐆𝐞𝐧𝐞𝐫𝐚𝐭𝐞 𝐓𝐢𝐦𝐞 ➪ ${formatTime(generateTime)}\n◆ 𝐍𝐨𝐭𝐞 ➪ 𝐄𝐱𝐩𝐢𝐫𝐲 𝐬𝐭𝐚𝐫𝐭𝐬 𝐰𝐡𝐞𝐧 𝐮𝐬𝐞𝐫 𝐥𝐨𝐠𝐬 𝐢𝐧 ◆`;
             
             document.getElementById('newKeyDisplay').classList.remove('hidden');
@@ -462,7 +497,6 @@
                 const { ip, port, duration } = event.data;
                 
                 try {
-                    // 1. Check Attack Lock
                     const lockRes = await fetch(`${CLOUD_DB_URL}settings/attack_locked.json`);
                     const isLocked = await lockRes.json();
                     if (isLocked === true) {
@@ -479,7 +513,7 @@
                         for(let i=1; i<=10; i++) {
                             const encryptedVal = configData[`api_key_${i}`];
                             if(encryptedVal && encryptedVal.trim() !== "") {
-                                apiKey = decryptKey(encryptedVal); // BASE64 DECODE HERE TOO
+                                apiKey = decryptKey(encryptedVal);
                                 if(apiKey) break;
                             }
                         }
