@@ -66,7 +66,6 @@
                 <input type="text" id="apiKey9" placeholder="𝐀𝐏𝐈 𝐊𝐞𝐲 𝟗">
                 <input type="text" id="apiKey10" placeholder="𝐀𝐏𝐈 𝐊𝐞𝐲 𝟏𝟎">
             </div>
-            <!-- Update List Button Added -->
             <div class="btn-group" style="flex-wrap: wrap;">
                 <button onclick="saveApis()" class="success" style="flex: 1;">💾 𝐒𝐀𝐕𝐄 𝐀𝐏𝐈𝐬</button>
                 <button onclick="deleteApis()" class="danger" style="flex: 1;">🗑️ 𝐃𝐄𝐋𝐄𝐓𝐄 𝐀𝐏𝐈𝐬</button>
@@ -125,24 +124,15 @@
     <script>
         const CLOUD_DB_URL = "https://kkhg5hh5-default-rtdb.firebaseio.com/";
         
-        const SECRET_SALT = "VeilSecure2024"; 
+        // Base64 Encryption/Decryption (Matches Kotlin)
         function encryptKey(key) {
             if (!key) return "";
-            let result = "";
-            for (let i = 0; i < key.length; i++) {
-                result += String.fromCharCode(key.charCodeAt(i) ^ SECRET_SALT.charCodeAt(i % SECRET_SALT.length));
-            }
-            return btoa(result); 
+            return btoa(key); // Simple Base64 Encode
         }
         function decryptKey(encryptedKey) {
             if (!encryptedKey) return "";
             try {
-                const decoded = atob(encryptedKey);
-                let result = "";
-                for (let i = 0; i < decoded.length; i++) {
-                    result += String.fromCharCode(decoded.charCodeAt(i) ^ SECRET_SALT.charCodeAt(i % SECRET_SALT.length));
-                }
-                return result;
+                return atob(encryptedKey); // Simple Base64 Decode
             } catch (e) { return ""; }
         }
 
@@ -204,7 +194,7 @@
             }
         }
 
-        // --- LOAD APIs (Fixed) ---
+        // --- LOAD APIs (Decrypts using Base64) ---
         async function loadApis() {
             try {
                 const res = await fetch(`${CLOUD_DB_URL}settings/config.json`);
@@ -215,7 +205,7 @@
                 if (data) {
                     for(let i=1; i<=10; i++) {
                         const encryptedVal = data[`api_key_${i}`] || "";
-                        const decryptedVal = decryptKey(encryptedVal);
+                        const decryptedVal = decryptKey(encryptedVal); // BASE64 DECODE
                         
                         // Fill slots with decrypted keys
                         document.getElementById(`apiKey${i}`).value = decryptedVal;
@@ -410,7 +400,7 @@
                         for(let i=1; i<=10; i++) {
                             const encryptedVal = configData[`api_key_${i}`];
                             if(encryptedVal && encryptedVal.trim() !== "") {
-                                apiKey = decryptKey(encryptedVal);
+                                apiKey = decryptKey(encryptedVal); // BASE64 DECODE HERE TOO
                                 if(apiKey) break;
                             }
                         }
