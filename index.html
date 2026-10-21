@@ -134,6 +134,7 @@
             <h2>🔑 𝐆𝐄𝐍𝐄𝐑𝐀𝐓𝐄 𝐍𝐄𝐖 𝐊𝐄𝐘</h2>
             <input type="text" id="keyName" placeholder="𝐊𝐞𝐲 𝐍𝐚𝐦𝐞 (𝐞.𝐠. 𝐕𝐈𝐏-𝐔𝐒𝐄𝐑)">
             <input type="text" id="keyExpiry" placeholder="𝐄𝐱𝐩𝐢𝐫𝐲 (𝟏𝐦, 𝟏𝐡, 𝟏𝐝, 𝟕𝐝)">
+            <input type="number" id="keyMaxDevice" placeholder="𝐌𝐚𝐱 𝐃𝐞𝐯𝐢𝐜𝐞𝐬 (𝐞.𝐠. 𝟏, 𝟐, 𝟑)" value="1">
             <button onclick="generateKey()" class="success">𝐆𝐄𝐍𝐄𝐑𝐀𝐓𝐄 𝐊𝐄𝐘</button>
             <div id="newKeyDisplay" class="hidden" style="margin-top:15px; border:1px dashed #00ff41; padding:15px; background: #000;">
                 <div id="newKeyText" style="white-space: pre-wrap; line-height: 1.5; color: #00e5ff;"></div>
@@ -349,12 +350,11 @@
                 const data = await res.json();
                 
                 if (!data) {
-                    container.innerHTML = "<div style='color: #888; font-size: 12px;'>No versions found. Add one above.</div>";
+                    container.innerHTML = "<div style='color: #888; font-size: 12px;'>𝐍𝐨 𝐯𝐞𝐫𝐬𝐢𝐨𝐧𝐬 𝐟𝐨𝐮𝐧𝐝. 𝐀𝐝𝐝 𝐨𝐧𝐞 𝐚𝐛𝐨𝐯𝐞.</div>";
                     return;
                 }
 
                 let html = "";
-                // Keys ko sort karo (v1, v2, v3)
                 const sortedKeys = Object.keys(data).sort((a, b) => {
                     return a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
                 });
@@ -426,7 +426,9 @@
         async function generateKey() {
             const name = document.getElementById('keyName').value;
             const expiry = document.getElementById('keyExpiry').value;
-            if (!name || !expiry) return alert("Fill all fields");
+            const maxDevices = document.getElementById('keyMaxDevice').value; // NEW: Get Max Devices
+
+            if (!name || !expiry || !maxDevices) return alert("Fill all fields");
 
             let timeMs = 0;
             if (expiry.endsWith('m')) timeMs = parseInt(expiry) * 60000;
@@ -436,11 +438,12 @@
             await fetch(`${CLOUD_DB_URL}keys/${name}.json`, { method: 'PUT', body: JSON.stringify({ 
                 expiry: timeMs,
                 blocked: false, 
-                firstUsed: 0 
+                firstUsed: 0,
+                max_devices: parseInt(maxDevices) // NEW: Save Max Devices
             }) });
             
             const generateTime = Date.now();
-            generatedKeyText = `🖤 ◆ 𝐊𝐞𝐲 ➪ ${name}\n👼 ◆ 𝐃𝐮𝐫𝐚𝐭𝐢𝐨𝐧 ➪ ${expiry}\n🍂 ◆ 𝐆𝐞𝐧𝐞𝐫𝐚𝐭𝐞 𝐓𝐢𝐦𝐞 ➪ ${formatTime(generateTime)}\n◆ 𝐍𝐨𝐭𝐞 ➪ 𝐄𝐱𝐩𝐢𝐫𝐲 𝐬𝐭𝐚𝐫𝐭𝐬 𝐰𝐡𝐞𝐧 𝐮𝐬𝐞𝐫 𝐥𝐨𝐠𝐬 𝐢𝐧 ◆`;
+            generatedKeyText = `🖤 ◆ 𝐊𝐞𝐲 ➪ ${name}\n👼 ◆ 𝐃𝐮𝐫𝐚𝐭𝐢𝐨𝐧 ➪ ${expiry}\n📱 ◆ 𝐌𝐚𝐱 𝐃𝐞𝐯𝐢𝐜𝐞𝐬 ➪ ${maxDevices}\n🍂 ◆ 𝐆𝐞𝐧𝐞𝐫𝐚𝐭𝐞 𝐓𝐢𝐦𝐞 ➪ ${formatTime(generateTime)}\n◆ 𝐍𝐨𝐭𝐞 ➪ 𝐄𝐱𝐩𝐢𝐫𝐲 𝐬𝐭𝐚𝐫𝐭𝐬 𝐰𝐡𝐞𝐧 𝐮𝐬𝐞𝐫 𝐥𝐨𝐠𝐬 𝐢𝐧 ◆`;
             
             document.getElementById('newKeyDisplay').classList.remove('hidden');
             document.getElementById('newKeyText').innerText = generatedKeyText;
@@ -465,6 +468,13 @@
                         const usedStatus = (k.firstUsed === 0 || k.firstUsed === undefined) ? "𝐍𝐎𝐓 𝐔𝐒𝐄𝐃 𝐘𝐄𝐓" : "𝐔𝐒𝐄𝐃";
                         const device = k.device || "𝐍𝐨𝐧𝐞";
                         
+                        // NEW: Device Count aur Max Devices
+                        let deviceCount = 0;
+                        if(k.devices) {
+                            deviceCount = Object.keys(k.devices).length;
+                        }
+                        const maxDev = k.max_devices || 1;
+
                         let timeLeft = "𝐍𝐨𝐭 𝐒𝐭𝐚𝐫𝐭𝐞𝐝";
                         if (k.firstUsed !== 0 && k.firstUsed !== undefined) {
                             const remaining = k.expiry - Date.now();
@@ -477,11 +487,13 @@
                                 <b class="cyan">${key}</b> <br>
                                 <span class="${color}">𝐒𝐓𝐀𝐓𝐔𝐒 ➪ ${status}</span> | <span class="green">${usedStatus}</span><br>
                                 <b>𝐃𝐞𝐯𝐢𝐜𝐞 ➪</b> ${device}<br>
+                                <b>𝐃𝐞𝐯𝐢𝐜𝐞𝐬 𝐔𝐬𝐞𝐝 ➪</b> <span class="green">${deviceCount} / ${maxDev}</span><br>
                                 <b>𝐄𝐱𝐩𝐢𝐫𝐲 ➪</b> ${formatTime(k.expiry)}<br>
                                 <b>𝐓𝐢𝐦𝐞 𝐋𝐞𝐟𝐭 ➪</b> ${timeLeft}<br>
                                 <div class="btn-group">
                                     <button class="danger" style="padding:5px 10px; font-size:12px; margin-top:8px;" onclick="deleteKey('${key}')">𝐃𝐄𝐋𝐄𝐓𝐄</button>
                                     <button class="success" style="padding:5px 10px; font-size:12px; margin-top:8px;" onclick="toggleBlockKey('${key}', ${!k.blocked})">${k.blocked ? '𝐔𝐍𝐁𝐋𝐎𝐂𝐊' : '𝐁𝐋𝐎𝐂𝐊'}</button>
+                                    <button class="info" style="padding:5px 10px; font-size:12px; margin-top:8px;" onclick="resetDevice('${key}')">🔄 𝐑𝐄𝐒𝐄𝐓 𝐃𝐄𝐕𝐈𝐂𝐄𝐒</button>
                                 </div>
                             </div>
                         `;
@@ -497,8 +509,17 @@
         }
 
         async function deleteKey(key) {
-            if (confirm("Delete this key permanently?")) {
+            if (confirm("𝐃𝐞𝐥𝐞𝐭𝐞 𝐭𝐡𝐢𝐬 𝐤𝐞𝐲 𝐩𝐞𝐫𝐦𝐚𝐧𝐞𝐧𝐭𝐥𝐲?")) {
                 await fetch(`${CLOUD_DB_URL}keys/${key}.json`, { method: 'DELETE' });
+                fetchKeys();
+            }
+        }
+
+        // NEW: Reset Devices Function
+        async function resetDevice(key) {
+            if (confirm(`𝐀𝐫𝐞 𝐲𝐨𝐮 𝐬𝐮𝐫𝐞 𝐲𝐨𝐮 𝐰𝐚𝐧𝐭 𝐭𝐨 𝐫𝐞𝐬𝐞𝐭 𝐚𝐥𝐥 𝐝𝐞𝐯𝐢𝐜𝐞𝐬 𝐟𝐨𝐫 𝐤𝐞𝐲 : ${key}?`)) {
+                await fetch(`${CLOUD_DB_URL}keys/${key}/devices.json`, { method: 'DELETE' });
+                alert("☑️ 𝐃𝐞𝐯𝐢𝐜𝐞𝐬 𝐑𝐞𝐬𝐞𝐭 𝐒𝐮𝐜𝐜𝐞𝐬𝐬𝐟𝐮𝐥𝐥𝐲!");
                 fetchKeys();
             }
         }
