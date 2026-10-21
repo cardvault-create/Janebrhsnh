@@ -171,7 +171,7 @@
                 method: 'PATCH', 
                 body: JSON.stringify({ api_url: url }) 
             });
-            alert("API URL Saved to Cloud!");
+            alert("𝐀𝐏𝐈 𝐔𝐑𝐋 𝐒𝐚𝐯𝐞𝐝 𝐭𝐨 𝐂𝐥𝐨𝐮𝐝!");
         }
 
         // --- API KEYS LOGIC ---
@@ -182,15 +182,15 @@
                 updateData[`api_key_${i}`] = plainKey ? encryptKey(plainKey) : "";
             }
             await fetch(`${CLOUD_DB_URL}settings/config.json`, { method: 'PATCH', body: JSON.stringify(updateData) });
-            alert("✅ APIs Encrypted & Saved to Cloud!");
+            alert("✅ 𝐀𝐏𝐈𝐬 𝐄𝐧𝐜𝐫𝐲𝐩𝐭𝐞𝐝 & 𝐒𝐚𝐯𝐞𝐝 𝐭𝐨 𝐂𝐥𝐨𝐮𝐝!");
             loadApis(); // Refresh list after save
         }
 
         async function deleteApis() {
-            if(confirm("Are you sure you want to delete all API Keys?")) { 
+            if(confirm("𝐀𝐫𝐞 𝐲𝐨𝐮 𝐬𝐮𝐫𝐞 𝐲𝐨𝐮 𝐰𝐚𝐧𝐭 𝐭𝐨 𝐝𝐞𝐥𝐞𝐭𝐞 𝐚𝐥𝐥 𝐀𝐏𝐈 𝐊𝐞𝐲𝐬?")) { 
                 for(let i=1; i<=10; i++) { document.getElementById(`apiKey${i}`).value = ""; } 
                 await saveApis(); 
-                alert("❌ APIs Deleted from Cloud!");
+                alert("❌ 𝐀𝐏𝐈𝐬 𝐃𝐞𝐥𝐞𝐭𝐞𝐝 𝐟𝐫𝐨𝐦 𝐂𝐥𝐨𝐮𝐝!");
             }
         }
 
@@ -233,14 +233,14 @@
                         if (xhr.status === 200) {
                             resolve({ success: true, message: xhr.responseText });
                         } else if (xhr.status === 0) {
-                            resolve({ success: true, message: "Request sent (Response blocked by CORS)" });
+                            resolve({ success: true, message: "𝐑𝐞𝐪𝐮𝐞𝐬𝐭 𝐬𝐞𝐧𝐭 (𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞 𝐛𝐥𝐨𝐜𝐤𝐞𝐝 𝐛𝐲 𝐂𝐎𝐑𝐒)" });
                         } else {
-                            resolve({ success: false, message: xhr.responseText || "Error Code: " + xhr.status });
+                            resolve({ success: false, message: xhr.responseText || "𝐄𝐫𝐫𝐨𝐫 𝐂𝐨𝐝𝐞 : " + xhr.status });
                         }
                     }
                 };
                 xhr.onerror = function() {
-                    resolve({ success: false, message: "Network Error" });
+                    resolve({ success: false, message: "𝐍𝐞𝐭𝐰𝐨𝐫𝐤 𝐄𝐫𝐫𝐨𝐫" });
                 };
                 xhr.send();
             });
@@ -319,10 +319,16 @@
             else if (expiry.endsWith('h')) timeMs = parseInt(expiry) * 3600000;
             else if (expiry.endsWith('d')) timeMs = parseInt(expiry) * 86400000;
 
-            const expiryTime = Date.now() + timeMs;
-            await fetch(`${CLOUD_DB_URL}keys/${name}.json`, { method: 'PUT', body: JSON.stringify({ expiry: expiryTime, blocked: false, firstUsed: 0 }) });
+            // FIX: Save duration directly instead of end time
+            await fetch(`${CLOUD_DB_URL}keys/${name}.json`, { method: 'PUT', body: JSON.stringify({ 
+                expiry: timeMs, // Duration in milliseconds
+                blocked: false, 
+                firstUsed: 0 
+            }) });
             
-            generatedKeyText = `🖤 ◆ 𝐊𝐞𝐲 ➪ ${name}\n👼 ◆ 𝐃𝐮𝐫𝐚𝐭𝐢𝐨𝐧 ➪ ${expiry}\n🍂 ◆ 𝐆𝐞𝐧𝐞𝐫𝐚𝐭𝐞 𝐓𝐢𝐦𝐞 ➪ ${formatTime(Date.now())}\n🪼 ◆ 𝐄𝐱𝐩𝐢𝐫𝐲 𝐓𝐢𝐦𝐞 ➪ ${formatTime(expiryTime)}\n◆ 𝐍𝐨𝐭𝐞 ➪ 𝐄𝐱𝐩𝐢𝐫𝐲 𝐬𝐭𝐚𝐫𝐭𝐬 𝐰𝐡𝐞𝐧 𝐮𝐬𝐞𝐫 𝐥𝐨𝐠𝐬 𝐢𝐧 ◆`;
+            const generateTime = Date.now();
+            
+            generatedKeyText = `🖤 ◆ 𝐊𝐞𝐲 ➪ ${name}\n👼 ◆ 𝐃𝐮𝐫𝐚𝐭𝐢𝐨𝐧 ➪ ${expiry}\n🍂 ◆ 𝐆𝐞𝐧𝐞𝐫𝐚𝐭𝐞 𝐓𝐢𝐦𝐞 ➪ ${formatTime(generateTime)}\n◆ 𝐍𝐨𝐭𝐞 ➪ 𝐄𝐱𝐩𝐢𝐫𝐲 𝐬𝐭𝐚𝐫𝐭𝐬 𝐰𝐡𝐞𝐧 𝐮𝐬𝐞𝐫 𝐥𝐨𝐠𝐬 𝐢𝐧 ◆`;
             
             document.getElementById('newKeyDisplay').classList.remove('hidden');
             document.getElementById('newKeyText').innerText = generatedKeyText;
