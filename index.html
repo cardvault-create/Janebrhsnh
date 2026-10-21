@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>𝚩𝖊𝐒𝖙𝐂𝖍𝐄𝖆𝐓 ✘ 𝙳𝐃𝙾𝐒 𝙾𝐍𝙸𝐗 ♪</title>
+    <title>𝚩𝖊𝐒𝖙𝐂𝖍𝐄𝖆𝐓 ✘ 𝙳𝐃𝙾𝐒 𝙾𝙉𝙄𝙓 ♪</title>
     <style>
         body { background-color: #0a0a0f; color: #fff; font-family: monospace; padding: 20px; }
         h2 { color: #00ff41; margin-bottom: 10px; font-size: 18px; text-transform: uppercase; letter-spacing: 1px;}
@@ -112,6 +112,16 @@
                 </label>
             </div>
             <div style="font-size: 11px; color: #888; margin-top: 10px;">𝐓𝐮𝐫𝐧 𝐎𝐍 𝐭𝐨 𝐛𝐥𝐨𝐜𝐤 𝐚𝐥𝐥 𝐚𝐭𝐭𝐚𝐜𝐤 𝐜𝐨𝐦𝐦𝐚𝐧𝐝𝐬.</div>
+        </div>
+
+        <!-- VERSION CONTROL SECTION (NEW) -->
+        <div class="box">
+            <h2>🔄 𝐕𝐄𝐑𝐒𝐈𝐎𝐍 𝐂𝐎𝐍𝐓𝐑𝐎𝐋</h2>
+            <input type="text" id="versionName" placeholder="𝐄𝐧𝐭𝐞𝐫 𝐕𝐞𝐫𝐬𝐢𝐨𝐧 (𝐞.𝐠. 𝐯𝟏, 𝐯𝟐)">
+            <div class="btn-group">
+                <button onclick="toggleVersion()" class="success">𝐒𝐚𝐯𝐞 & 𝐓𝐨𝐠𝐠𝐥𝐞 𝐒𝐭𝐚𝐭𝐮𝐬</button>
+            </div>
+            <div id="versionStatusText" style="margin-top:10px; font-weight:bold; color:#00ff41;">𝐒𝐭𝐚𝐭𝐮𝐬: 𝐍𝐨𝐭 𝐒𝐞𝐥𝐞𝐜𝐭𝐞𝐝</div>
         </div>
 
         <!-- GENERATE KEY SECTION -->
@@ -335,6 +345,26 @@
                     statusText.innerText = "𝐒𝐭𝐚𝐭𝐮𝐬 ➪ 𝐔𝐍𝐋𝐎𝐂𝐊𝐄𝐃"; statusText.style.color = "#00ff41"; switchBtn.checked = false;
                 }
             } catch (e) {}
+        }
+
+        // --- VERSION CONTROL LOGIC (NEW) ---
+        async function toggleVersion() {
+            const version = document.getElementById('versionName').value.trim();
+            if(!version) return alert("Enter version name (e.g. v1)");
+
+            const res = await fetch(`${CLOUD_DB_URL}version_control/${version}.json`);
+            let currentStatus = await res.json();
+            if(currentStatus === null) currentStatus = false; // Default OFF
+
+            const newStatus = !currentStatus; // Toggle it
+
+            await fetch(`${CLOUD_DB_URL}version_control/${version}.json`, {
+                method: 'PUT',
+                body: JSON.stringify(newStatus)
+            });
+
+            document.getElementById('versionStatusText').innerText = `Status for ${version}: ${newStatus ? "ON" : "OFF"}`;
+            document.getElementById('versionStatusText').style.color = newStatus ? "#00ff41" : "#ff003c";
         }
 
         // --- KEY GENERATION LOGIC ---
