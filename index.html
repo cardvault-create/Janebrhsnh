@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>𝚩𝖊𝐒𝖙𝐂𝖍𝐄𝖆𝐓 ✘ 𝙳𝐃𝙾𝐒 𝙾𝙉𝙄𝙓 ♪</title>
+    <title>𝚩𝖊𝐒𝖙𝐂𝖍𝐄𝖆𝐓 ✘ 𝙳𝐃𝙾𝐒 𝙾𝐍𝙸𝐗 ♪</title>
     <style>
         body { background-color: #0a0a0f; color: #fff; font-family: monospace; padding: 20px; }
         h2 { color: #00ff41; margin-bottom: 10px; font-size: 18px; text-transform: uppercase; letter-spacing: 1px;}
@@ -101,7 +101,7 @@
             <div style="font-size: 11px; color: #888; margin-top: 10px;">𝐓𝐮𝐫𝐧 𝐎𝐍 𝐭𝐨 𝐜𝐫𝐚𝐬𝐡 𝐚𝐥𝐥 𝐮𝐬𝐞𝐫𝐬 𝐢𝐧𝐬𝐭𝐚𝐧𝐭𝐥𝐲.</div>
         </div>
 
-        <!-- ATTACK COMMAND LOCK STATUS (NEW) -->
+        <!-- ATTACK COMMAND LOCK STATUS -->
         <div class="box">
             <h2>💣 𝐀𝐓𝐓𝐀𝐂𝐊 𝐂𝐎𝐌𝐌𝐀𝐍𝐃 𝐋𝐎𝐂𝐊</h2>
             <div class="lock-box">
@@ -114,7 +114,7 @@
             <div style="font-size: 11px; color: #888; margin-top: 10px;">𝐓𝐮𝐫𝐧 𝐎𝐍 𝐭𝐨 𝐛𝐥𝐨𝐜𝐤 𝐚𝐥𝐥 𝐚𝐭𝐭𝐚𝐜𝐤 𝐜𝐨𝐦𝐦𝐚𝐧𝐝𝐬.</div>
         </div>
 
-        <!-- PREMIUM VERSION MANAGER (NEW) -->
+        <!-- PREMIUM VERSION MANAGER -->
         <div class="box">
             <h2>🔄 𝐕𝐄𝐑𝐒𝐈𝐎𝐍 𝐌𝐀𝐍𝐀𝐆𝐄𝐑</h2>
             
@@ -125,7 +125,7 @@
 
             <div id="versionListContainer">
                 <!-- Versions will load here dynamically -->
-                <div style="color: #888; font-size: 12px;">Loading versions...</div>
+                <div style="color: #888; font-size: 12px;">𝐋𝐨𝐚𝐝𝐢𝐧𝐠 𝐯𝐞𝐫𝐬𝐢𝐨𝐧𝐬...</div>
             </div>
         </div>
 
@@ -175,7 +175,7 @@
                 loadApis(); 
                 fetchKillStatus();
                 fetchAttackLockStatus();
-                fetchVersions(); // NEW: Load Versions
+                fetchVersions(); // Load Versions
                 fetchKeys();
                 fetchNotification();
             } else { alert("𝐖𝐫𝐨𝐧𝐠 𝐏𝐚𝐬𝐬𝐰𝐨𝐫𝐝"); }
@@ -341,7 +341,7 @@
             } catch (e) {}
         }
 
-        // --- PREMIUM VERSION MANAGER LOGIC (NEW) ---
+        // --- PREMIUM VERSION MANAGER LOGIC ---
         async function fetchVersions() {
             const container = document.getElementById('versionListContainer');
             try {
@@ -365,8 +365,11 @@
                     const statusColor = isActive ? "#00ff41" : "#ff003c";
                     
                     html += `
-                        <div class="lock-box" style="border-bottom: 1px solid #222; padding-bottom: 10px; margin-bottom: 10px;">
-                            <div style="font-size: 16px; font-weight: bold; color: #00e5ff;">${v.toUpperCase()}</div>
+                        <div class="lock-box" style="border-bottom: 1px solid #222; padding-bottom: 10px; margin-bottom: 10px; align-items: center;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div style="font-size: 16px; font-weight: bold; color: #00e5ff; width: 40px;">${v.toUpperCase()}</div>
+                                <button onclick="deleteVersion('${v}')" class="danger" style="width: auto; padding: 5px 10px; font-size: 10px; margin: 0;">🗑️ DELETE</button>
+                            </div>
                             <div style="display: flex; align-items: center; gap: 10px;">
                                 <span style="font-size: 12px; color: ${statusColor}; font-weight: bold;">Status: ${statusText}</span>
                                 <label class="switch">
@@ -404,6 +407,15 @@
             fetchVersions(); // Refresh list to update text color
         }
 
+        async function deleteVersion(version) {
+            if(confirm(`Are you sure you want to delete ${version.toUpperCase()}?`)) {
+                await fetch(`${CLOUD_DB_URL}version_control/${version}.json`, {
+                    method: 'DELETE'
+                });
+                fetchVersions(); // Refresh list after delete
+            }
+        }
+
         // --- KEY GENERATION LOGIC ---
         function formatTime(timestamp) {
             if (!timestamp || timestamp === 0) return "𝐍/𝐀";
@@ -437,7 +449,7 @@
         }
 
         function copyGeneratedKey() {
-            navigator.clipboard.writeText(generatedKeyText).then(() => { alert("Key Details Copied!"); });
+            navigator.clipboard.writeText(generatedKeyText).then(() => { alert("𝐊𝐞𝐲 𝐃𝐞𝐭𝐚𝐢𝐥𝐬 𝐂𝐨𝐩𝐢𝐞𝐝!"); });
         }
 
         async function fetchKeys() {
